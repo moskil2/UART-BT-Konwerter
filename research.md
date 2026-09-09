@@ -7,23 +7,6 @@ W README.md (BafSPEED) to punkt "Coming Soon" - **Moduł BT zamiast OTG - 20%**.
 Ten plik istnieje, żeby NIE zaczynać tematu od zera przy każdej kolejnej rozmowie - zbiera
 wszystko co ustalone, potwierdzone i wciąż otwarte.
 
-## Lista zakupowa (BOM) - kompletna, sprawdzona 09.09.2026
-
-Cały układ, jedna lista, żeby nie dowiadywać się o kolejnych brakujących częściach osobno:
-
-| # | Część | Status |
-|---|---|---|
-| 1 | HM-10 (moduł BLE) | ✅ posiadany |
-| 2 | Przetwornica step-down 5-60V→5V | ✅ posiadana |
-| 3 | 4-kanałowy konwerter poziomów logicznych (BSS138) | ✅ posiadany |
-| 4 | MOSFET BSS123 (SOT-23) | ✅ posiadany |
-| 5 | Stabilizator 3,3V (np. AMS1117-3.3) | ✅ posiadany |
-| 6 | Złącze HIGO 5-pin | ✅ posiadane |
-| 7 | Rezystor 10kΩ (pull-down Gate→PL) | ⬜ do kupienia - grosze, dowolny sklep. [Pakiet 50szt na Allegro](https://allegro.pl/oferta/10k-1-rezystor-opornik-10k-0-6w-1-10kohm-x50szt-7624943364) |
-
-**To jest cała lista** - żadnych innych komponentów układ nie wymaga. Jeśli w przyszłości pojawi
-się coś nowego, trafi tu, w tę samą tabelę, zamiast być wspominane tylko w rozmowie.
-
 ## Status (09.09.2026): schemat scalony, wersje 1 i 2 połączone
 
 Wcześniej ten katalog opisywał dwie osobne, niespójne wersje projektu (wersja 1 - stały mostek
