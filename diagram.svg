@@ -156,7 +156,6 @@
 
   <!-- PIO -> Gate BSS123 (new switchable P+/PL control, replaces old fixed wire bridge) -->
   <path d="M800,520 V700 H191 V258" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#arrow)" />
-  <text x="495" y="692" text-anchor="middle" font-size="13.5" fill-opacity="0.75">R szeregowy ~100-330Ω (na tej linii, nie rysowany osobno)</text>
   <text x="191" y="288" text-anchor="middle" font-size="13" fill-opacity="0.75">+ R podciągający G→PL ~10kΩ</text>
   <text x="191" y="300" text-anchor="middle" font-size="13" fill-opacity="0.75">(domyślnie OFF = kontroler wyłączony)</text>
 </svg>

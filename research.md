@@ -69,11 +69,13 @@ trzeba będzie przenumerować.
   RxD kontrolera) to fizyczne przejścia przez tę samą płytkę.
 - **MOSFET BSS123** (`BSS_123.jpeg`) - N-kanałowy, logic-level, SOT-23, **100V/0,17A ciągłe**
   (potwierdzone realnym datasheetem Fairchild). Zastępuje dawny stały mostek drutowy P+/PL -
-  Drain→P+ (pin1), Source→PL (pin2), Gate sterowany bezpośrednio z pinu PIO modułu HM-10
-  (3,3V logiki wystarcza, próg bramki ~1-2,5V, bez dodatkowego drivera/bufora) przez rezystor
-  szeregowy ~100-330Ω. Rezystor podciągający Gate→PL (~10kΩ) trzyma MOSFET domyślnie
-  WYŁĄCZONY (kontroler wyłączony) podczas startu/resetu HM-10, gdy stan PIO jest jeszcze
-  niezdefiniowany.
+  Drain→P+ (pin1), Source→PL (pin2), Gate sterowany **bezpośrednio** z pinu PIO modułu HM-10
+  (3,3V logiki wystarcza, próg bramki ~1-2,5V, bez dodatkowego drivera/bufora ANI rezystora
+  szeregowego - ten ostatni jest tylko opcjonalną dobrą praktyką, nie wymogiem, więc świadomie
+  go pomijamy dla prostoty). Jedyny rezystor w tym torze to **rezystor podciągający Gate→PL
+  (~10kΩ)** - ten MA realną funkcję: trzyma MOSFET domyślnie WYŁĄCZONY (kontroler wyłączony)
+  podczas startu/resetu HM-10, gdy stan PIO jest jeszcze niezdefiniowany/pływający. Bez niego
+  kontroler mógłby się przypadkowo włączyć przy starcie modułu BT.
 - **Stabilizator 3,3V** (`Stabilizator.PNG`, np. AMS1117-3.3, moduł 12,3×8,6mm) - piny
   VIN/OUT/GND. Zasila LVcc konwertera poziomów, bo ten egzemplarz HM-10 nie wyprowadza
   wewnętrznego 3,3V. VIN z szyny +5V (za przetwornicą), GND wspólna, OUT → LVcc.
@@ -111,8 +113,8 @@ GND (pin4)          -> wspólna masa (obie strony układu, w tym IN-/OUT- przetw
 TxD (pin5)          -> H3 -> L3 -> RXD (HM-10)
 RxD (pin3)          <- H4 <- L4 <- TXD (HM-10)
 PL (pin2)           <- BSS123 Source
-BSS123 Gate         <- R ~100-330Ω <- PIO (HM-10)
-BSS123 Gate         -> R ~10kΩ -> PL (pull-down, domyślnie OFF)
+BSS123 Gate         <- PIO (HM-10), bezpośrednio (bez rezystora szeregowego)
+BSS123 Gate         -> R ~10kΩ -> PL (pull-down, domyślnie OFF - jedyny rezystor w tym torze)
 ```
 
 ## Do potwierdzenia przed lutowaniem (wciąż otwarte)

@@ -42,8 +42,8 @@ GND (pin4)          -> wspólna masa (obie strony układu, w tym IN-/OUT- przetw
 TxD (pin5)          -> H3 -> L3 -> RXD (HM-10)
 RxD (pin3)          <- H4 <- L4 <- TXD (HM-10)
 PL (pin2)           <- BSS123 Source
-BSS123 Gate         <- PIO (HM-10), bezpośrednio (opcjonalny R szeregowy ~100-330Ω, ochronny, nie wymagany)
-BSS123 Gate         -> R ~10kΩ -> PL (pull-down, domyślnie OFF)
+BSS123 Gate         <- PIO (HM-10), bezpośrednio (bez rezystora szeregowego)
+BSS123 Gate         -> R ~10kΩ -> PL (pull-down, domyślnie OFF - jedyny rezystor w tym torze)
 ```
 
 ## Elementy
@@ -53,7 +53,7 @@ BSS123 Gate         -> R ~10kΩ -> PL (pull-down, domyślnie OFF)
 | **HM-10** | ![HM-10](HM-10.png) | Moduł BLE, chip CC2541F256. Piny: RXD, TXD, GND, VCC (3,6-6V), PIO (steruje bramką MOSFET-a). Ten egzemplarz nie wyprowadza wewnętrznego 3,3V - potrzebny osobny regulator dla LVcc konwertera. |
 | **Przetwornica step-down P+ → 5V** | ![Przetwornica](DC-DC_StepDown_DC5-60V_5V.PNG) | Moduł 5-60V → 5V, stałe wyjście, 4 piny IN+/IN-/OUT+/OUT-, kondensator wejściowy rated 63V. Jedyna, zdecydowana przetwornica w projekcie (wcześniejszy kandydat XL7015 odrzucony). |
 | **Konwerter poziomów logicznych** | ![Konwerter](Konwerter.png) | 4-kanałowy, oparty na BSS138. Dwie niezależne szyny: HVcc (5V) i LVcc (3,3V, z osobnego regulatora np. AMS1117-3.3). |
-| **MOSFET BSS123** | ![BSS123](BSS_123.jpeg) | N-kanałowy, logic-level, SOT-23, 100V/0,17A ciągłe. Zastępuje dawny stały mostek drutowy P+/PL - Drain→P+, Source→PL, Gate←PIO (HM-10, bezpośrednio). Rezystor podciągający Gate→PL (~10kΩ) trzyma MOSFET domyślnie WYŁĄCZONY przy starcie/resecie HM-10. |
+| **MOSFET BSS123** | ![BSS123](BSS_123.jpeg) | N-kanałowy, logic-level, SOT-23, 100V/0,17A ciągłe. Zastępuje dawny stały mostek drutowy P+/PL - Drain→P+, Source→PL, Gate←PIO (HM-10), **bezpośrednio, bez rezystora szeregowego** (to tylko opcjonalna dobra praktyka, nie wymóg - świadomie pominięty dla prostoty). Jedyny rezystor w tym torze to rezystor podciągający Gate→PL (~10kΩ), który trzyma MOSFET domyślnie WYŁĄCZONY przy starcie/resecie HM-10. |
 | **Stabilizator 3,3V** | ![Stabilizator](Stabilizator.PNG) | Np. AMS1117-3.3, moduł 12,3×8,6mm, piny VIN/OUT/GND. Zasila LVcc konwertera poziomów (ten egzemplarz HM-10 nie wyprowadza wewnętrznego 3,3V). |
 | **Złącze HIGO 5-pin** | ![HIGO5](Wtyczka_HIGO5.png) | Złącze programujące kontrolera. |
 | **Zdjęcie referencyjne HIGO5** | ![Higo5 ref](Higo5.PNG) | Podaje INNĄ numerację pinów niż rozbiórka kabła - patrz sekcja konfliktu wyżej. |
