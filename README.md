@@ -34,6 +34,9 @@ numeracji z rozbiórki kabla (1=P+, 2=PL, 3=RxD, 4=GND, 5=TxD).
 
 <img src="diagram.svg" alt="Schemat: HIGO 5-pin -> MOSFET BSS123 -> przetwornica step-down -> konwerter poziomów BSS138 -> HM-10" width="100%">
 
+Alternatywny, ręcznie zweryfikowany schemat (na zdjęciach realnych płytek):
+[`Schemat_hybrydowy.png`](Schemat_hybrydowy.png).
+
 ```
 P+ (pin1, 30-60V)  -> przetwornica IN+                          -> BSS123 Drain
 przetwornica OUT+ (+5V) -> HVcc konwertera -> VCC modułu HM-10 (bezpośrednio)
