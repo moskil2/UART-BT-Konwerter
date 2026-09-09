@@ -15,11 +15,12 @@ schemat (`bt-bridge-wiring.html`, ten sam plik co Artifact "BT Bridge Wiring") z
 jedną, spójną wersję** - patrz sekcja "Aktualny schemat" niżej. Artifact zaktualizowany pod tym
 samym linkiem: https://claude.ai/code/artifact/c50ae686-184f-428b-8734-26c2a34c23c5
 
-## ⚠️ KONFLIKT: dwa źródła podają różną numerację pinów HIGO (09.09.2026, nierozstrzygnięte)
+## Numeracja pinów HIGO - wyjaśnione 09.09.2026
 
-Mamy dwa źródła numeracji pinów złącza HIGO 5-pin i **się nie zgadzają**:
+Mieliśmy chwilowo zapisane jako "konflikt" dwa źródła numeracji pinów, które pozornie się nie
+zgadzały:
 
-| Pin | Rozbiórka kabla programującego (`KabelUSB_1/2.jpeg`) | Zdjęcie referencyjne (`Higo5.PNG`) |
+| Pin | Rozbiórka kabla programującego / strona KONTROLERA (`KabelUSB_1/2.jpeg`, `Wtyczka_HIGO5.png`) | `Higo5.PNG` - strona WYŚWIETLACZA |
 |---|---|---|
 | 1 | P+ | GND |
 | 2 | PL | TxD |
@@ -27,23 +28,23 @@ Mamy dwa źródła numeracji pinów złącza HIGO 5-pin i **się nie zgadzają**
 | 4 | GND | RxD |
 | 5 | TxD | PL ("Power Lock") |
 
-**Ważne sprostowanie co do rozbiórki kabla** (bo poprzednia wersja tego pliku to zawyżała):
-zdjęcia `KabelUSB_1.jpeg`/`KabelUSB_2.jpeg` pokazują stronę USB kabla (płytkę z układem
-USB-serial) - widać na nich TYLKO kolory przewodów: 3 przewody (czerwony/zielonkawy/czarny)
-idą do padów TXD/RXD/GND na płytce, a 2 przewody (niebieski+żółty) są zlutowane razem, osobno.
-To potwierdza SAM MECHANIZM (dwa sygnały zwarte ze sobą = P+/PL), ale **nie pokazuje numerów
-pinów na samym złączu HIGO** - te numery (1=P+, 2=PL...) pochodzą tylko z wątku na forum,
-pośrednio, nigdy nie były zweryfikowane bezpośrednio na złączu.
+**To nie jest sprzeczność.** `Wtyczka_HIGO5.png` i `Higo5.PNG` to zdjęcia DWÓCH RÓŻNYCH,
+parujących się połówek tego samego złącza - jedna od strony kontrolera, druga od strony
+wyświetlacza. Kontroler i wyświetlacz to dwie płcie tej samej wtyczki, patrzące na siebie
+"twarzą w twarz" przy łączeniu - stąd naturalnie odwrócona numeracja pozycji między nimi,
+dokładnie tak jak przy patrzeniu na dowolne złącze od strony styków vs od strony przeciwnej.
 
-`Higo5.PNG` wygląda na oficjalny/sklepowy diagram referencyjny złącza (opisany "Female Bafang
-variant") - prawdopodobnie bardziej wiarygodny niż wątek na forum, ale też niepotwierdzony
-przez nas fizycznie.
+**Do naszego mostka BT liczy się WYŁĄCZNIE strona kontrolera** (bo to w to złącze się
+podłączamy, zastępując wyświetlacz) - `Higo5.PNG` pokazuje inne, niepowiązane bezpośrednio
+złącze i zostaje w tym katalogu tylko jako materiał poglądowy, nie jako konkurencyjne źródło
+numeracji.
 
-**Przed jakimkolwiek lutowaniem: zmierzyć multimetrem napięcie na każdym pinie fizycznej
-wtyczki (przy podłączonej baterii) - pin z ~30-60V to P+, to jedyny pewny sposób.** Cały
-obecny schemat (`bt-bridge-wiring.html`) używa WCIĄŻ numeracji z rozbiórki kabla (1=P+, 2=PL,
-3=RxD, 4=GND, 5=TxD) - jeśli multimetr potwierdzi zdjęcie referencyjne zamiast tego, schemat
-trzeba będzie przenumerować.
+**Wciąż otwarte, mimo wyjaśnienia:** numeracja strony kontrolera (1=P+, 2=PL, 3=RxD, 4=GND,
+5=TxD) pochodzi tylko pośrednio z wątku na forum, nigdy nie zweryfikowana bezpośrednio na
+złączu ani oficjalnym schematem producenta. **Nadal warto zmierzyć multimetrem napięcie na
+każdym pinie fizycznej wtyczki (przy podłączonej baterii, pin z ~30-60V to P+) przed
+lutowaniem na stałe** - dla pewności, że to pośrednie źródło się nie myli, niezależnie od
+sprawy z `Higo5.PNG`.
 
 - W oryginalnym kablu (fabrycznym) **P+ i PL są zwarte ze sobą kawałkiem drutu** - to jedyny
   sposób na wybudzenie kontrolera bez podłączonego prawdziwego wyświetlacza (brak jakiejkolwiek
@@ -140,7 +141,7 @@ BSS123 Gate         -> R ~10kΩ -> PL (pull-down, domyślnie OFF - jedyny rezyst
 | `BSS_123.jpeg` | Zdjęcie MOSFET-a BSS123 (SOT-23) - zdalny włącznik P+/PL |
 | `Stabilizator.PNG` | Zdjęcie stabilizatora 3,3V (np. AMS1117-3.3) - zasila LVcc konwertera poziomów |
 | `Wtyczka_HIGO5.png` | Zdjęcie złącza HIGO 5-pin |
-| `Higo5.PNG` | **Zdjęcie referencyjne z numeracją pinów - KONFLIKT z rozbiórką kabla, patrz sekcja na górze pliku** |
+| `Higo5.PNG` | Zdjęcie referencyjne złącza HIGO **od strony wyświetlacza** (nie kontrolera) - materiał poglądowy, patrz wyjaśnienie na górze pliku |
 | `HM-10_appka_screenshot.jpg` | Ten sam HM-10, użyty jako screenshot w README.md BafSPEED (sekcja Coming Soon) |
 
 ## Do uzgodnienia (następnym razem zacznij tutaj)

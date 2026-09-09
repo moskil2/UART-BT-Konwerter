@@ -9,11 +9,13 @@ zbiera wszystko co ustalone, potwierdzone i wciąż otwarte. Pełna, szczegóło
 dokumentacji: [`research.md`](research.md). Pełny interaktywny schemat (z podpiętymi zdjęciami,
 klikalny): [`bt-bridge-wiring.html`](bt-bridge-wiring.html).
 
-## ⚠️ Konflikt numeracji pinów HIGO - nierozstrzygnięty
+## Numeracja pinów HIGO - wyjaśnione 09.09.2026
 
-Mamy dwa źródła numeracji pinów złącza HIGO 5-pin i **się nie zgadzają**:
+`Wtyczka_HIGO5.png` (strona kontrolera) i `Higo5.PNG` (strona wyświetlacza) pokazują różną
+numerację - ale to nie sprzeczność, tylko dwie różne, parujące się połówki tego samego złącza,
+patrzące na siebie "twarzą w twarz" (stąd naturalnie odwrócona numeracja pozycji):
 
-| Pin | Rozbiórka kabla programującego | Zdjęcie referencyjne (`Higo5.PNG`) |
+| Pin | Strona KONTROLERA (do tego się podłączamy) | Strona WYŚWIETLACZA (`Higo5.PNG`, materiał poglądowy) |
 |---|---|---|
 | 1 | P+ | GND |
 | 2 | PL | TxD |
@@ -21,14 +23,10 @@ Mamy dwa źródła numeracji pinów złącza HIGO 5-pin i **się nie zgadzają**
 | 4 | GND | RxD |
 | 5 | TxD | PL ("Power Lock") |
 
-Rozbiórka kabla (`KabelUSB_1.jpeg`, `KabelUSB_2.jpeg`) potwierdza tylko **mechanizm** (dwa
-sygnały - P+/PL - zwarte ze sobą kawałkiem drutu w oryginalnym kablu), nie same numery pinów -
-te pochodzą pośrednio z wątku na forum. `Higo5.PNG` wygląda na oficjalny diagram referencyjny
-("Female Bafang variant"), ale też niepotwierdzony przez nas fizycznie.
-
-**Przed jakimkolwiek lutowaniem: zmierzyć multimetrem napięcie na każdym pinie fizycznej
-wtyczki (przy podłączonej baterii) - pin z ~30-60V to P+.** Schemat poniżej używa wciąż
-numeracji z rozbiórki kabla (1=P+, 2=PL, 3=RxD, 4=GND, 5=TxD).
+Do naszego mostka BT liczy się wyłącznie strona kontrolera (1=P+, 2=PL, 3=RxD, 4=GND, 5=TxD).
+Numeracja ta pochodzi tylko pośrednio z wątku na forum, nie z oficjalnego schematu producenta -
+**mimo wyjaśnienia powyższego, nadal warto zmierzyć multimetrem napięcie na każdym pinie
+fizycznej wtyczki (przy podłączonej baterii, pin z ~30-60V to P+) przed lutowaniem na stałe.**
 
 ## Schemat połączeń
 
@@ -60,7 +58,7 @@ BSS123 Gate         -> R ~10kΩ -> PL (pull-down, domyślnie OFF - jedyny rezyst
 | **MOSFET BSS123** | ![BSS123](BSS_123.jpeg) | N-kanałowy, logic-level, SOT-23, 100V/0,17A ciągłe. Zastępuje dawny stały mostek drutowy P+/PL - Drain→P+, Source→PL, Gate←PIO (HM-10), **bezpośrednio, bez rezystora szeregowego** (to tylko opcjonalna dobra praktyka, nie wymóg - świadomie pominięty dla prostoty). Jedyny rezystor w tym torze to rezystor podciągający Gate→PL (~10kΩ), który trzyma MOSFET domyślnie WYŁĄCZONY przy starcie/resecie HM-10. |
 | **Stabilizator 3,3V** | ![Stabilizator](Stabilizator.PNG) | Np. AMS1117-3.3, moduł 12,3×8,6mm, piny VIN/OUT/GND. Zasila LVcc konwertera poziomów (ten egzemplarz HM-10 nie wyprowadza wewnętrznego 3,3V). |
 | **Złącze HIGO 5-pin** | ![HIGO5](Wtyczka_HIGO5.png) | Złącze programujące kontrolera. |
-| **Zdjęcie referencyjne HIGO5** | ![Higo5 ref](Higo5.PNG) | Podaje INNĄ numerację pinów niż rozbiórka kabła - patrz sekcja konfliktu wyżej. |
+| **Zdjęcie referencyjne HIGO5 (strona wyświetlacza)** | ![Higo5 ref](Higo5.PNG) | Inne, niepowiązane bezpośrednio złącze (druga płeć wtyczki) - materiał poglądowy, patrz wyjaśnienie wyżej. |
 
 ### Dlaczego BSS123 (100V/0,17A) wystarcza
 
@@ -86,7 +84,7 @@ zlutowane razem, osobno - to mechanizm wybudzenia kontrolera bez prawdziwego wy�
 
 ## Do potwierdzenia przed lutowaniem
 
-- **Numeracja pinów HIGO - konflikt dwóch źródeł, patrz sekcja na górze.** Zweryfikować multimetrem.
+- Numeracja pinów HIGO (strona kontrolera) - wyjaśnione, patrz sekcja na górze, ale wciąż warto zweryfikować multimetrem (pochodzi tylko pośrednio z wątku na forum).
 - Rzeczywisty poziom logiki UART kontrolera (3,3V czy 5V) - nieustalony i celowo
   nierozstrzygnięty: HVcc konwertera ustawione na 5V jako bezpieczny nadzbiór, BSS138 podciąga
   rezystorem do HVcc, więc aktywny driver 3,3V ze strony kontrolera i tak "wygrywa" - nic się
@@ -111,5 +109,6 @@ zlutowane razem, osobno - to mechanizm wybudzenia kontrolera bez prawdziwego wy�
 | `DC-DC_StepDown_DC5-60V_5V.PNG` | Wybrana przetwornica step-down |
 | `Przetwornica.png` | XL7015 - odrzucony kandydat, archiwum |
 | `BSS_123.jpeg` | MOSFET BSS123 |
-| `Wtyczka_HIGO5.png`, `Higo5.PNG` | Złącze HIGO 5-pin (drugie - zdjęcie referencyjne, konflikt numeracji) |
+| `Wtyczka_HIGO5.png` | Złącze HIGO 5-pin, strona kontrolera |
+| `Higo5.PNG` | Złącze HIGO 5-pin, strona wyświetlacza (materiał poglądowy, inne złącze) |
 | `Stabilizator.PNG` | Stabilizator 3,3V (np. AMS1117-3.3) |
