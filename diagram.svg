@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 740" role="img" aria-label="Schemat poziomy: z lewej ponumerowane złącze HIGO 5-pin kontrolera Bafanga, z MOSFET-em BSS123 między pinem P+ i PL (Drain do P+, Source do PL, Gate sterowany z PIO modułu HM-10 - zastępuje dawny mostek na stałe), w środku konwerter poziomów BSS138 z pinami H1 H2 HVcc GND H3 H4 (strona HIGH, lewa krawędź) oraz L1 L2 LVcc GND L3 L4 (strona LOW, prawa krawędź), z prawej moduł HM-10 z pinami VCC GND RXD TXD PIO. U dołu osobny regulator REG 3V3 (np. AMS1117-3.3) z trzema podłączonymi pinami: VIN z szyny +5V, GND do wspólnej masy, VOUT do LVcc konwertera. Szyna +5V zasila HVcc i VCC modułu, GND wspólna, kanały H3 do L3 i H4 do L4 przenoszą skrzyżowane sygnały TX i RX, a nowa linia PIO na dole schematu steruje bramką MOSFET-a przez rezystor szeregowy, z rezystorem podciągającym Gate-Source.">
+  <rect x="0" y="0" width="1100" height="740" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L8,4 L0,8 z" fill="currentColor" />
+    </marker>
+  </defs>
+
+  <!-- +5V spine -->
+  <line x1="150" y1="30" x2="850" y2="30" stroke="#c0392b" stroke-width="2" />
+
+  <!-- Box: HIGO 5-pin connector (left) -->
+  <rect x="40" y="140" width="110" height="380" rx="10" fill="none" stroke="currentColor" stroke-width="1.4" />
+  <text x="95" y="126" text-anchor="middle" font-size="17" font-weight="700" letter-spacing="0.03em">HIGO 5-PIN</text>
+  <g font-size="15" font-family="ui-monospace, Consolas, monospace">
+    <circle cx="150" cy="180" r="4.5" fill="currentColor" />
+    <text x="135" y="176" text-anchor="end" font-weight="700">1</text>
+    <text x="135" y="192" text-anchor="end">P+</text>
+
+    <circle cx="150" cy="250" r="4.5" fill="currentColor" />
+    <text x="135" y="246" text-anchor="end" font-weight="700">2</text>
+    <text x="135" y="262" text-anchor="end">PL</text>
+
+    <circle cx="150" cy="320" r="4.5" fill="currentColor" />
+    <text x="135" y="316" text-anchor="end" font-weight="700">3</text>
+    <text x="135" y="332" text-anchor="end">RxD</text>
+
+    <circle cx="150" cy="390" r="4.5" fill="currentColor" />
+    <text x="135" y="386" text-anchor="end" font-weight="700">4</text>
+    <text x="135" y="402" text-anchor="end">GND</text>
+
+    <circle cx="150" cy="460" r="4.5" fill="currentColor" />
+    <text x="135" y="456" text-anchor="end" font-weight="700">5</text>
+    <text x="135" y="472" text-anchor="end">TxD</text>
+  </g>
+  <!-- P+/PL switch: BSS123 MOSFET (replaces old permanent wire bridge) -->
+  <rect x="150" y="172" width="82" height="86" rx="10" fill="none" stroke="currentColor" stroke-width="2" />
+  <text x="191" y="163" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.02em">BSS123</text>
+  <text x="163" y="196" font-size="13" font-family="ui-monospace, Consolas, monospace">D</text>
+  <text x="163" y="248" font-size="13" font-family="ui-monospace, Consolas, monospace">S</text>
+  <circle cx="191" cy="258" r="4.5" fill="currentColor" />
+  <text x="191" y="273" text-anchor="middle" font-size="13" font-family="ui-monospace, Consolas, monospace">G</text>
+
+  <!-- Box: DC-DC step-down 5-60V -> 5V fixed (new module, above the switch) -->
+  <rect x="175" y="60" width="115" height="75" rx="8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 3" />
+  <text x="233" y="52" text-anchor="middle" font-size="15" font-weight="700" letter-spacing="0.03em">DC-DC STEP-DOWN</text>
+  <text x="233" y="102" text-anchor="middle" font-size="13" fill-opacity="0.6">5-60V → 5V (stałe)</text>
+  <g font-size="13" font-family="ui-monospace, Consolas, monospace">
+    <circle cx="175" cy="85" r="4.5" fill="currentColor" />
+    <text x="182" y="81">IN+</text>
+    <circle cx="215" cy="135" r="4.5" fill="currentColor" />
+    <text x="215" y="148" text-anchor="middle">IN-/OUT- (GND)</text>
+    <circle cx="290" cy="85" r="4.5" fill="currentColor" />
+    <text x="283" y="81" text-anchor="end">OUT+</text>
+  </g>
+
+  <!-- Box: level converter (middle) -->
+  <rect x="320" y="170" width="280" height="340" rx="10" fill="none" stroke="currentColor" stroke-width="1.4" />
+  <text x="460" y="156" text-anchor="middle" font-size="17" font-weight="700" letter-spacing="0.03em">4-CHANNEL LOGIC LEVEL CONVERTER</text>
+  <text x="330" y="200" font-size="14" fill-opacity="0.6">HIGH</text>
+  <text x="590" y="200" text-anchor="end" font-size="14" fill-opacity="0.6">LOW</text>
+  <!-- internal pass-through -->
+  <line x1="320" y1="370" x2="600" y2="370" stroke="#5f6b64" stroke-width="2" />
+  <line x1="320" y1="420" x2="600" y2="420" stroke="#a66c12" stroke-width="2" />
+  <line x1="320" y1="470" x2="600" y2="470" stroke="#217a70" stroke-width="2" />
+
+  <g font-size="14.5" font-family="ui-monospace, Consolas, monospace">
+    <circle cx="320" cy="220" r="4.5" fill="currentColor" opacity="0.4" />
+    <text x="335" y="224" opacity="0.5">H1</text>
+    <circle cx="320" cy="270" r="4.5" fill="currentColor" opacity="0.4" />
+    <text x="335" y="274" opacity="0.5">H2</text>
+    <circle cx="320" cy="320" r="4.5" fill="currentColor" />
+    <text x="335" y="324">HVcc</text>
+    <circle cx="320" cy="370" r="4.5" fill="currentColor" />
+    <text x="335" y="374">GND</text>
+    <circle cx="320" cy="420" r="4.5" fill="currentColor" />
+    <text x="335" y="424">H3</text>
+    <circle cx="320" cy="470" r="4.5" fill="currentColor" />
+    <text x="335" y="474">H4</text>
+
+    <circle cx="600" cy="220" r="4.5" fill="currentColor" opacity="0.4" />
+    <text x="585" y="224" text-anchor="end" opacity="0.5">L1</text>
+    <circle cx="600" cy="270" r="4.5" fill="currentColor" opacity="0.4" />
+    <text x="585" y="274" text-anchor="end" opacity="0.5">L2</text>
+    <circle cx="600" cy="320" r="4.5" fill="currentColor" />
+    <text x="585" y="324" text-anchor="end">LVcc</text>
+    <circle cx="600" cy="370" r="4.5" fill="currentColor" />
+    <text x="585" y="374" text-anchor="end">GND</text>
+    <circle cx="600" cy="420" r="4.5" fill="currentColor" />
+    <text x="585" y="424" text-anchor="end">L3</text>
+    <circle cx="600" cy="470" r="4.5" fill="currentColor" />
+    <text x="585" y="474" text-anchor="end">L4</text>
+  </g>
+
+  <!-- Box: HM-10 (right) -->
+  <rect x="800" y="220" width="260" height="330" rx="10" fill="none" stroke="currentColor" stroke-width="1.4" />
+  <text x="930" y="206" text-anchor="middle" font-size="17" font-weight="700" letter-spacing="0.03em">HM-10 · BLE Module</text>
+  <text x="930" y="240" text-anchor="middle" font-size="14" fill-opacity="0.6">CC2541F256</text>
+
+  <g font-size="15" font-family="ui-monospace, Consolas, monospace">
+    <circle cx="800" cy="270" r="4.5" fill="currentColor" />
+    <text x="815" y="266">VCC</text>
+    <text x="815" y="280" font-size="13" fill-opacity="0.55">3,6-6V</text>
+
+    <circle cx="800" cy="340" r="4.5" fill="currentColor" />
+    <text x="815" y="344">GND</text>
+
+    <circle cx="800" cy="420" r="4.5" fill="currentColor" />
+    <text x="815" y="424">RXD</text>
+
+    <circle cx="800" cy="470" r="4.5" fill="currentColor" />
+    <text x="815" y="474">TXD</text>
+
+    <circle cx="800" cy="520" r="4.5" fill="currentColor" />
+    <text x="815" y="524">PIO</text>
+    <text x="815" y="538" font-size="13" fill-opacity="0.55">→ Gate BSS123</text>
+  </g>
+
+  <!-- Box: REG 3V3 (bottom) -->
+  <rect x="650" y="560" width="140" height="90" rx="8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 3" />
+  <text x="720" y="583" text-anchor="middle" font-size="14.5" font-weight="700">REG 3V3</text>
+  <text x="720" y="598" text-anchor="middle" font-size="13" fill-opacity="0.6">np. AMS1117-3.3</text>
+  <g font-size="13.5" font-family="ui-monospace, Consolas, monospace">
+    <circle cx="680" cy="560" r="3" fill="currentColor" />
+    <text x="680" y="550" text-anchor="middle">VIN</text>
+    <circle cx="735" cy="560" r="3" fill="currentColor" />
+    <text x="735" y="550" text-anchor="middle">VOUT</text>
+    <circle cx="705" cy="650" r="3" fill="currentColor" />
+    <text x="705" y="665" text-anchor="middle">GND</text>
+  </g>
+
+  <!-- +5V wires -->
+  <path d="M150,180 V85 H175" fill="none" stroke="#c0392b" stroke-width="2" marker-end="url(#arrow)" />
+  <path d="M290,85 V30" fill="none" stroke="#c0392b" stroke-width="2" />
+  <path d="M320,320 H290 V30" fill="none" stroke="#c0392b" stroke-width="2" marker-start="url(#arrow)" />
+  <path d="M800,270 H760 V30" fill="none" stroke="#c0392b" stroke-width="2" marker-start="url(#arrow)" />
+  <path d="M680,560 V30" fill="none" stroke="#c0392b" stroke-width="2" marker-start="url(#arrow)" />
+  <text x="855" y="25" font-size="13.5" fill="#c0392b" text-anchor="start">+5V (z przetwornicy step-down)</text>
+
+  <!-- GND wires -->
+  <path d="M215,135 V390" fill="none" stroke="#5f6b64" stroke-width="2" />
+  <path d="M150,390 H280 V370 H320" fill="none" stroke="#5f6b64" stroke-width="2" />
+  <path d="M600,370 H700 V340 H800" fill="none" stroke="#5f6b64" stroke-width="2" />
+  <path d="M150,390 V670 H705 V650" fill="none" stroke="#5f6b64" stroke-width="2" />
+
+  <!-- TX signal: pin5 -> H3 -> L3 -> RXD -->
+  <path d="M150,460 H280 V420 H320" fill="none" stroke="#a66c12" stroke-width="2" marker-end="url(#arrow)" />
+  <path d="M600,420 H800" fill="none" stroke="#a66c12" stroke-width="2" marker-end="url(#arrow)" />
+
+  <!-- RX signal: TXD -> L4 -> H4 -> pin3 -->
+  <path d="M800,470 H600" fill="none" stroke="#217a70" stroke-width="2" marker-end="url(#arrow)" />
+  <path d="M320,470 H260 V320 H150" fill="none" stroke="#217a70" stroke-width="2" marker-end="url(#arrow)" />
+
+  <!-- REG VOUT -> LVcc -->
+  <path d="M735,560 V320 H600" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#arrow)" />
+
+  <!-- PIO -> Gate BSS123 (new switchable P+/PL control, replaces old fixed wire bridge) -->
+  <path d="M800,520 V700 H191 V258" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#arrow)" />
+  <text x="495" y="692" text-anchor="middle" font-size="13.5" fill-opacity="0.75">R szeregowy ~100-330Ω (na tej linii, nie rysowany osobno)</text>
+  <text x="191" y="288" text-anchor="middle" font-size="13" fill-opacity="0.75">+ R podciągający G→PL ~10kΩ</text>
+  <text x="191" y="300" text-anchor="middle" font-size="13" fill-opacity="0.75">(domyślnie OFF = kontroler wyłączony)</text>
+</svg>
