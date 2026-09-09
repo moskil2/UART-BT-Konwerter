@@ -54,6 +54,7 @@ BSS123 Gate         -> R ~10kΩ -> PL (pull-down, domyślnie OFF)
 | **Przetwornica step-down P+ → 5V** | ![Przetwornica](DC-DC_StepDown_DC5-60V_5V.PNG) | Moduł 5-60V → 5V, stałe wyjście, 4 piny IN+/IN-/OUT+/OUT-, kondensator wejściowy rated 63V. Jedyna, zdecydowana przetwornica w projekcie (wcześniejszy kandydat XL7015 odrzucony). |
 | **Konwerter poziomów logicznych** | ![Konwerter](Konwerter.png) | 4-kanałowy, oparty na BSS138. Dwie niezależne szyny: HVcc (5V) i LVcc (3,3V, z osobnego regulatora np. AMS1117-3.3). |
 | **MOSFET BSS123** | ![BSS123](BSS_123.jpeg) | N-kanałowy, logic-level, SOT-23, 100V/0,17A ciągłe. Zastępuje dawny stały mostek drutowy P+/PL - Drain→P+, Source→PL, Gate←PIO (HM-10, bezpośrednio). Rezystor podciągający Gate→PL (~10kΩ) trzyma MOSFET domyślnie WYŁĄCZONY przy starcie/resecie HM-10. |
+| **Stabilizator 3,3V** | ![Stabilizator](Stabilizator.PNG) | Np. AMS1117-3.3, moduł 12,3×8,6mm, piny VIN/OUT/GND. Zasila LVcc konwertera poziomów (ten egzemplarz HM-10 nie wyprowadza wewnętrznego 3,3V). |
 | **Złącze HIGO 5-pin** | ![HIGO5](Wtyczka_HIGO5.png) | Złącze programujące kontrolera. |
 | **Zdjęcie referencyjne HIGO5** | ![Higo5 ref](Higo5.PNG) | Podaje INNĄ numerację pinów niż rozbiórka kabła - patrz sekcja konfliktu wyżej. |
 
@@ -107,3 +108,4 @@ zlutowane razem, osobno - to mechanizm wybudzenia kontrolera bez prawdziwego wy�
 | `Przetwornica.png` | XL7015 - odrzucony kandydat, archiwum |
 | `BSS_123.jpeg` | MOSFET BSS123 |
 | `Wtyczka_HIGO5.png`, `Higo5.PNG` | Złącze HIGO 5-pin (drugie - zdjęcie referencyjne, konflikt numeracji) |
+| `Stabilizator.PNG` | Stabilizator 3,3V (np. AMS1117-3.3) |

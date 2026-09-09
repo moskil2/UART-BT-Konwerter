@@ -74,6 +74,9 @@ trzeba będzie przenumerować.
   szeregowy ~100-330Ω. Rezystor podciągający Gate→PL (~10kΩ) trzyma MOSFET domyślnie
   WYŁĄCZONY (kontroler wyłączony) podczas startu/resetu HM-10, gdy stan PIO jest jeszcze
   niezdefiniowany.
+- **Stabilizator 3,3V** (`Stabilizator.PNG`, np. AMS1117-3.3, moduł 12,3×8,6mm) - piny
+  VIN/OUT/GND. Zasila LVcc konwertera poziomów, bo ten egzemplarz HM-10 nie wyprowadza
+  wewnętrznego 3,3V. VIN z szyny +5V (za przetwornicą), GND wspólna, OUT → LVcc.
 - **Złącze HIGO 5-pin** (`Wtyczka_HIGO5.png`).
 
 ### Dlaczego BSS123 (100V/0,17A) wystarcza - realne dane prądowe
@@ -133,6 +136,7 @@ BSS123 Gate         -> R ~10kΩ -> PL (pull-down, domyślnie OFF)
 | `DC-DC_StepDown_DC5-60V_5V.PNG` | Zdjęcie wybranej przetwornicy 5-60V→5V o stałym wyjściu (podpięta w schemacie) |
 | `Przetwornica.png` | Zdjęcie XL7015 - **odrzucony kandydat**, zostawione na dysku jako archiwum, usunięte z dokumentacji/schematu |
 | `BSS_123.jpeg` | Zdjęcie MOSFET-a BSS123 (SOT-23) - zdalny włącznik P+/PL |
+| `Stabilizator.PNG` | Zdjęcie stabilizatora 3,3V (np. AMS1117-3.3) - zasila LVcc konwertera poziomów |
 | `Wtyczka_HIGO5.png` | Zdjęcie złącza HIGO 5-pin |
 | `Higo5.PNG` | **Zdjęcie referencyjne z numeracją pinów - KONFLIKT z rozbiórką kabla, patrz sekcja na górze pliku** |
 | `HM-10_appka_screenshot.jpg` | Ten sam HM-10, użyty jako screenshot w README.md BafSPEED (sekcja Coming Soon) |
