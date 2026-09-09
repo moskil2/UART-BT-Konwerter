@@ -9,6 +9,20 @@ zbiera wszystko co ustalone, potwierdzone i wciąż otwarte. Pełna, szczegóło
 dokumentacji: [`research.md`](research.md). Pełny interaktywny schemat (z podpiętymi zdjęciami,
 klikalny): [`bt-bridge-wiring.html`](bt-bridge-wiring.html).
 
+## Lista zakupowa (BOM) - kompletna
+
+| # | Część | Status |
+|---|---|---|
+| 1 | HM-10 (moduł BLE) | ✅ posiadany |
+| 2 | Przetwornica step-down 5-60V→5V | ✅ posiadana |
+| 3 | 4-kanałowy konwerter poziomów logicznych (BSS138) | ✅ posiadany |
+| 4 | MOSFET BSS123 (SOT-23) | ✅ posiadany |
+| 5 | Stabilizator 3,3V (np. AMS1117-3.3) | ✅ posiadany |
+| 6 | Złącze HIGO 5-pin | ✅ posiadane |
+| 7 | Rezystor 10kΩ (pull-down Gate→PL) | ⬜ do kupienia - grosze, dowolny sklep. [Pakiet 50szt na Allegro](https://allegro.pl/oferta/10k-1-rezystor-opornik-10k-0-6w-1-10kohm-x50szt-7624943364) |
+
+To jest cała lista - żadnych innych komponentów układ nie wymaga.
+
 ## ⚠️ Konflikt numeracji pinów HIGO - nierozstrzygnięty
 
 Mamy dwa źródła numeracji pinów złącza HIGO 5-pin i **się nie zgadzają**:
