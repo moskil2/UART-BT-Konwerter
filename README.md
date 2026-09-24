@@ -1,21 +1,21 @@
-# UART-BT Konwerter
+# UART-BT Converter
 
-Sprzętowy mostek między UART-em kontrolera Bafang (złącze programujące HIGO 5-pin) a telefonem
-przez Bluetooth (moduł HM-10) - appka [EggSPEED](https://github.com/moskil2/EggSPEED) łączy się
-bez kabla USB OTG. W README EggSPEED to punkt "Coming Soon" - **Moduł BT zamiast OTG - 20%**.
+A hardware bridge between the UART of a Bafang controller (HIGO 5-pin programming connector) and a phone
+over Bluetooth (HM-10 module) - the [EggSPEED](https://github.com/moskil2/EggSPEED) app connects
+without a USB OTG cable. In the EggSPEED README this is the "Roadmap" item - **A Bluetooth module replacing the USB OTG cable - 20%**.
 
-To repo istnieje, żeby nie zaczynać tematu od zera przy każdej kolejnej sesji projektowej -
-zbiera wszystko co ustalone, potwierdzone i wciąż otwarte. Pełna, szczegółowa wersja tej
-dokumentacji: [`research.md`](research.md). Pełny interaktywny schemat (z podpiętymi zdjęciami,
-klikalny): [`bt-bridge-wiring.html`](bt-bridge-wiring.html).
+This repo exists so that each design session doesn't have to start from scratch - it collects
+everything that is settled, confirmed and still open. The full, detailed version of this
+documentation: [`research.md`](research.md) (in Polish). The full interactive schematic (with photos attached,
+clickable): [`bt-bridge-wiring.html`](bt-bridge-wiring.html).
 
-## Numeracja pinów HIGO - wyjaśnione 09.09.2026
+## HIGO pin numbering - explained 09.09.2026
 
-`Wtyczka_HIGO5.png` (strona kontrolera) i `Higo5.PNG` (strona wyświetlacza) pokazują różną
-numerację - ale to nie sprzeczność, tylko dwie różne, parujące się połówki tego samego złącza,
-patrzące na siebie "twarzą w twarz" (stąd naturalnie odwrócona numeracja pozycji):
+`Wtyczka_HIGO5.png` (controller side) and `Higo5.PNG` (display side) show different
+numbering - but that is not a contradiction, they are two different, mating halves of the same connector,
+facing each other "face to face" (hence the naturally reversed position numbering):
 
-| Pin | Strona KONTROLERA (do tego się podłączamy) | Strona WYŚWIETLACZA (`Higo5.PNG`, materiał poglądowy) |
+| Pin | CONTROLLER side (what we connect to) | DISPLAY side (`Higo5.PNG`, reference only) |
 |---|---|---|
 | 1 | P+ | GND |
 | 2 | PL | TxD |
@@ -23,92 +23,93 @@ patrzące na siebie "twarzą w twarz" (stąd naturalnie odwrócona numeracja poz
 | 4 | GND | RxD |
 | 5 | TxD | PL ("Power Lock") |
 
-Do naszego mostka BT liczy się wyłącznie strona kontrolera (1=P+, 2=PL, 3=RxD, 4=GND, 5=TxD).
-Numeracja ta pochodzi tylko pośrednio z wątku na forum, nie z oficjalnego schematu producenta -
-**mimo wyjaśnienia powyższego, nadal warto zmierzyć multimetrem napięcie na każdym pinie
-fizycznej wtyczki (przy podłączonej baterii, pin z ~30-60V to P+) przed lutowaniem na stałe.**
+Only the controller side matters for our BT bridge (1=P+, 2=PL, 3=RxD, 4=GND, 5=TxD).
+This numbering comes only indirectly from a forum thread, not from the manufacturer's official schematic -
+**despite the explanation above, it is still worth measuring the voltage on each pin of the
+physical plug with a multimeter (with the battery connected, the pin at ~30-60V is P+) before soldering anything permanently.**
 
-## Schemat połączeń
+## Wiring diagram
 
-<img src="diagram.svg" alt="Schemat: HIGO 5-pin -> MOSFET BSS123 -> przetwornica step-down -> konwerter poziomów BSS138 -> HM-10" width="100%">
+<img src="diagram.svg" alt="Diagram: HIGO 5-pin -> BSS123 MOSFET -> step-down converter -> BSS138 level shifter -> HM-10" width="100%">
 
-Alternatywny, ręcznie zweryfikowany schemat (na zdjęciach realnych płytek):
+Alternative, hand-verified diagram (drawn on photos of the real boards):
 
-<img src="Schemat_hybrydowy.png" alt="Schemat hybrydowy - na zdjeciach realnych plytek" width="100%">
+<img src="Schemat_hybrydowy.png" alt="Hybrid diagram - on photos of the real boards" width="100%">
 
 ```
-P+ (pin1, 30-60V)  -> przetwornica IN+                          -> BSS123 Drain
-przetwornica OUT+ (+5V) -> HVcc konwertera -> VCC modułu HM-10 (bezpośrednio)
-                         -> VIN regulatora 3,3V (np. AMS1117-3.3) -> LVcc konwertera
-GND (pin4)          -> wspólna masa (obie strony układu, w tym IN-/OUT- przetwornicy)
+P+ (pin1, 30-60V)  -> step-down IN+                          -> BSS123 Drain
+step-down OUT+ (+5V) -> level shifter HVcc -> HM-10 module VCC (directly)
+                     -> 3.3V regulator VIN (e.g. AMS1117-3.3) -> level shifter LVcc
+GND (pin4)          -> common ground (both sides of the circuit, including step-down IN-/OUT-)
 TxD (pin5)          -> H3 -> L3 -> RXD (HM-10)
 RxD (pin3)          <- H4 <- L4 <- TXD (HM-10)
 PL (pin2)           <- BSS123 Source
-BSS123 Gate         <- PIO (HM-10), bezpośrednio (bez rezystora szeregowego)
-BSS123 Gate         -> R ~10kΩ -> PL (pull-down, domyślnie OFF - jedyny rezystor w tym torze)
+BSS123 Gate         <- PIO (HM-10), directly (no series resistor)
+BSS123 Gate         -> R ~10kΩ -> PL (pull-down, OFF by default - the only resistor in this path)
 ```
 
-## Elementy
+## Components
 
-| Element | Zdjęcie | Opis |
+| Component | Photo | Description |
 |---|---|---|
-| **HM-10** | ![HM-10](HM-10.png) | Moduł BLE, chip CC2541F256. Piny: RXD, TXD, GND, VCC (3,6-6V), PIO (steruje bramką MOSFET-a). Ten egzemplarz nie wyprowadza wewnętrznego 3,3V - potrzebny osobny regulator dla LVcc konwertera. |
-| **Przetwornica step-down P+ → 5V** | ![Przetwornica](DC-DC_StepDown_DC5-60V_5V.PNG) | Moduł 5-60V → 5V, stałe wyjście, 4 piny IN+/IN-/OUT+/OUT-, kondensator wejściowy rated 63V. Jedyna, zdecydowana przetwornica w projekcie (wcześniejszy kandydat XL7015 odrzucony). |
-| **Konwerter poziomów logicznych** | ![Konwerter](Konwerter.png) | 4-kanałowy, oparty na BSS138. Dwie niezależne szyny: HVcc (5V) i LVcc (3,3V, z osobnego regulatora np. AMS1117-3.3). |
-| **MOSFET BSS123** | ![BSS123](BSS_123.jpeg) | N-kanałowy, logic-level, SOT-23, 100V/0,17A ciągłe. Zastępuje dawny stały mostek drutowy P+/PL - Drain→P+, Source→PL, Gate←PIO (HM-10), **bezpośrednio, bez rezystora szeregowego** (to tylko opcjonalna dobra praktyka, nie wymóg - świadomie pominięty dla prostoty). Jedyny rezystor w tym torze to rezystor podciągający Gate→PL (~10kΩ), który trzyma MOSFET domyślnie WYŁĄCZONY przy starcie/resecie HM-10. |
-| **Stabilizator 3,3V** | ![Stabilizator](Stabilizator.PNG) | Np. AMS1117-3.3, moduł 12,3×8,6mm, piny VIN/OUT/GND. Zasila LVcc konwertera poziomów (ten egzemplarz HM-10 nie wyprowadza wewnętrznego 3,3V). |
-| **Złącze HIGO 5-pin** | ![HIGO5](Wtyczka_HIGO5.png) | Złącze programujące kontrolera. |
-| **Zdjęcie referencyjne HIGO5 (strona wyświetlacza)** | ![Higo5 ref](Higo5.PNG) | Inne, niepowiązane bezpośrednio złącze (druga płeć wtyczki) - materiał poglądowy, patrz wyjaśnienie wyżej. |
+| **HM-10** | ![HM-10](HM-10.png) | BLE module, CC2541F256 chip. Pins: RXD, TXD, GND, VCC (3.6-6V), PIO (drives the MOSFET gate). This unit does not expose an internal 3.3V - a separate regulator is needed for the level shifter's LVcc. |
+| **Step-down converter P+ → 5V** | ![Step-down converter](DC-DC_StepDown_DC5-60V_5V.PNG) | 5-60V → 5V module, fixed output, 4 pins IN+/IN-/OUT+/OUT-, input capacitor rated 63V. The one and only converter chosen for the project (the earlier XL7015 candidate was rejected). |
+| **Logic level shifter** | ![Level shifter](Konwerter.png) | 4-channel, BSS138-based. Two independent rails: HVcc (5V) and LVcc (3.3V, from a separate regulator, e.g. AMS1117-3.3). |
+| **BSS123 MOSFET** | ![BSS123](BSS_123.jpeg) | N-channel, logic-level, SOT-23, 100V/0.17A continuous. Replaces the former fixed wire bridge between P+ and PL - Drain→P+, Source→PL, Gate←PIO (HM-10), **directly, with no series resistor** (that is only an optional good practice, not a requirement - deliberately left out for simplicity). The only resistor in this path is the Gate→PL pull-down (~10kΩ), which keeps the MOSFET OFF by default during HM-10 startup/reset. |
+| **3.3V regulator** | ![Regulator](Stabilizator.PNG) | E.g. AMS1117-3.3, 12.3×8.6mm module, pins VIN/OUT/GND. Powers the level shifter's LVcc (this HM-10 unit does not expose an internal 3.3V). |
+| **HIGO 5-pin connector** | ![HIGO5](Wtyczka_HIGO5.png) | The controller's programming connector. |
+| **HIGO5 reference photo (display side)** | ![Higo5 ref](Higo5.PNG) | A different connector, not directly related (the other gender of the plug) - reference only, see the explanation above. |
 
-### Dlaczego BSS123 (100V/0,17A) wystarcza
+### Why the BSS123 (100V/0.17A) is enough
 
-Specyfikacja wyświetlacza Bafang DPC18
+Specification of the Bafang DPC18 display
 ([california-ebike.com](https://california-ebike.com/products/bafang-color-display-dpc18)):
-prąd znamionowy 10mA, maks. roboczy 30mA, upływ w standby <1µA, zasilanie do kontrolera 50mA.
-Realne prądy na linii P+/PL to pojedyncze dziesiątki mA - ogromny zapas względem 170mA MOSFET-a.
+rated current 10mA, max operating current 30mA, standby leakage <1µA, supply to the controller 50mA.
+Real currents on the P+/PL line are a few tens of mA - a huge margin against the MOSFET's 170mA.
 
-### Odrzucone opcje przełącznika P+/PL
+### Rejected P+/PL switch options
 
-- **NTR4170N** - pomyłka z pamięci, datasheet pokazał tylko 30V - za mało, NIE UŻYWAĆ.
-- **Gotowe moduły przekaźników "10A 250VAC/10A 30VDC"** - rating 30VDC za mało (P+ może sięgać ~58V).
-- **Przekaźnik kontaktronowy (reed relay)** - rozważony, odrzucony na rzecz MOSFET-a (mniejszy, izolacja niepotrzebna).
+- **NTR4170N** - a mistake from memory, the datasheet showed only 30V - too little, DO NOT USE.
+- **Ready-made relay modules "10A 250VAC/10A 30VDC"** - the 30VDC rating is too low (P+ can reach ~58V).
+- **Reed relay** - considered, rejected in favor of the MOSFET (smaller, isolation not needed).
 
-## Zdjęcia z rozbiórki oryginalnego kabla programującego
+## Photos from disassembling the original programming cable
 
 | | |
 |---|---|
-| ![Kabel 1](KabelUSB_1.jpeg) | ![Kabel 2](KabelUSB_2.jpeg) |
+| ![Cable 1](KabelUSB_1.jpeg) | ![Cable 2](KabelUSB_2.jpeg) |
 
-Potwierdzają: 3 przewody (TXD/RXD/GND) idą do płytki USB-serial, 2 przewody (P+/PL) są
-zlutowane razem, osobno - to mechanizm wybudzenia kontrolera bez prawdziwego wyświetlacza.
+They confirm: 3 wires (TXD/RXD/GND) go to the USB-serial board, 2 wires (P+/PL) are
+soldered together, separately - this is the mechanism that wakes the controller without a real display.
 
-## Do potwierdzenia przed lutowaniem
+## To confirm before soldering
 
-- Numeracja pinów HIGO (strona kontrolera) - wyjaśnione, patrz sekcja na górze, ale wciąż warto zweryfikować multimetrem (pochodzi tylko pośrednio z wątku na forum).
-- Rzeczywisty poziom logiki UART kontrolera (3,3V czy 5V) - nieustalony i celowo
-  nierozstrzygnięty: HVcc konwertera ustawione na 5V jako bezpieczny nadzbiór, BSS138 podciąga
-  rezystorem do HVcc, więc aktywny driver 3,3V ze strony kontrolera i tak "wygrywa" - nic się
-  nie uszkadza w żadnym wariancie.
+- HIGO pin numbering (controller side) - explained, see the section at the top, but still worth verifying with a multimeter (it comes only indirectly from a forum thread).
+- The real UART logic level of the controller (3.3V or 5V) - undetermined and deliberately
+  left unresolved: the level shifter's HVcc is set to 5V as a safe superset, the BSS138 pulls up
+  with a resistor to HVcc, so an active 3.3V driver on the controller side wins anyway - nothing
+  gets damaged in either case.
 
-## Do zrobienia
+## To do
 
-1. Zweryfikować multimetrem numerację pinów HIGO przed lutowaniem.
-2. Fizyczne złożenie układu na płytce/prototypie - schemat i dobór elementów są już gotowe,
-   brakuje faktycznego montażu i testu na prawdziwym kontrolerze.
+1. Verify the HIGO pin numbering with a multimeter before soldering.
+2. Physically assemble the circuit on a board/prototype - the diagram and component selection are already done,
+   what is missing is the actual assembly and a test on a real controller.
 
-## Pliki w repo
+## Files in the repo
 
-| Plik | Co to jest |
+| File | What it is |
 |---|---|
-| `research.md` | Pełna, szczegółowa wersja tej dokumentacji |
-| `bt-bridge-wiring.html` | Pełny interaktywny schemat (ten sam co Artifact "BT Bridge Wiring") |
-| `diagram.svg` | Sam wektorowy schemat (bez zdjęć), użyty w tym README |
-| `HM-10.png`, `HM-10_appka_screenshot.jpg` | Zdjęcia modułu HM-10 |
-| `KabelUSB_1.jpeg`, `KabelUSB_2.jpeg` | Rozbiórka oryginalnego kabla programującego |
-| `Konwerter.png` | Konwerter poziomów logicznych (BSS138) |
-| `DC-DC_StepDown_DC5-60V_5V.PNG` | Wybrana przetwornica step-down |
-| `Przetwornica.png` | XL7015 - odrzucony kandydat, archiwum |
-| `BSS_123.jpeg` | MOSFET BSS123 |
-| `Wtyczka_HIGO5.png` | Złącze HIGO 5-pin, strona kontrolera |
-| `Higo5.PNG` | Złącze HIGO 5-pin, strona wyświetlacza (materiał poglądowy, inne złącze) |
-| `Stabilizator.PNG` | Stabilizator 3,3V (np. AMS1117-3.3) |
+| `research.md` | The full, detailed version of this documentation (in Polish) |
+| `bt-bridge-wiring.html` | The full interactive diagram (same as the "BT Bridge Wiring" Artifact) |
+| `diagram.svg` | The vector diagram only (no photos), used in this README |
+| `HM-10.png`, `HM-10_appka_screenshot.jpg` | Photos of the HM-10 module |
+| `KabelUSB_1.jpeg`, `KabelUSB_2.jpeg` | Disassembly of the original programming cable |
+| `Konwerter.png` | Logic level shifter (BSS138) |
+| `DC-DC_StepDown_DC5-60V_5V.PNG` | The chosen step-down converter |
+| `Przetwornica.png` | XL7015 - rejected candidate, archive |
+| `BSS_123.jpeg` | BSS123 MOSFET |
+| `Wtyczka_HIGO5.png` | HIGO 5-pin connector, controller side |
+| `Higo5.PNG` | HIGO 5-pin connector, display side (reference only, a different connector) |
+| `Stabilizator.PNG` | 3.3V regulator (e.g. AMS1117-3.3) |
+| `Schemat_hybrydowy.png` | Hybrid diagram on photos of the real boards |
