@@ -24,7 +24,7 @@ zgadzały:
 |---|---|---|
 | 1 | P+ | GND |
 | 2 | PL | TxD |
-| 3 | RxD | P+ (48V) |
+| 3 | RxD | P+ (36V, 48V, 52V) |
 | 4 | GND | RxD |
 | 5 | TxD | PL ("Power Lock") |
 

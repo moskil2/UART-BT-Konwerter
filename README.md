@@ -19,7 +19,7 @@ facing each other "face to face" (hence the naturally reversed position numberin
 |---|---|---|
 | 1 | P+ | GND |
 | 2 | PL | TxD |
-| 3 | RxD | P+ (48V) |
+| 3 | RxD | P+ (36V, 48V, 52V) |
 | 4 | GND | RxD |
 | 5 | TxD | PL ("Power Lock") |
 
@@ -32,7 +32,7 @@ physical plug with a multimeter (with the battery connected, the pin at ~30-60V 
 
 <img src="diagram.svg" alt="Diagram: HIGO 5-pin -> BSS123 MOSFET -> step-down converter -> BSS138 level shifter -> HM-10" width="100%">
 
-Alternative, hand-verified diagram (drawn on photos of the real boards):
+Alternative, hybrid diagram (drawn on photos of the real boards):
 
 <img src="Schemat_hybrydowy.png" alt="Hybrid diagram - on photos of the real boards" width="100%">
 
