@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 650" role="img" aria-label="Wiring diagram V2. Left: numbered HIGO 5-pin connector of the Bafang controller (1 P+, 2 PL, 3 RxD, 4 GND, 5 TxD). P+ and PL are shorted with a wire, like in the original OTG programming cable. P+ also feeds a 5-60V to 5V DC-DC step-down converter, whose 5V output powers the VCC pin of the Bluetooth module (HM-10, HC-06 or BT-06). Controller GND goes to the converter IN- pin and the converter OUT- pin goes to the module GND, with no direct GND to GND wire, because IN- and OUT- are connected inside the (non-isolated) converter. Controller TxD goes to the module RXD, and the module TXD goes to the controller RxD, directly, because both sides use 3.3V logic. No level converter, no MOSFET, no 3.3V regulator.">
+  <rect x="0" y="0" width="1100" height="650" fill="#ffffff"/>
+  <defs>
+    <marker id="arrTx" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#a66c12" />
+    </marker>
+    <marker id="arrRx" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#217a70" />
+    </marker>
+  </defs>
+  <g font-family="Segoe UI, Arial, Helvetica, sans-serif" fill="#1b1f1c">
+
+    <!-- ===== Title ===== -->
+    <text x="550" y="22" text-anchor="middle" font-size="19" font-weight="700">UART-BT bridge - wiring V2 (3.3 V logic, direct connection)</text>
+
+    <!-- ===== HIGO 5-pin connector (controller side) ===== -->
+    <rect x="40" y="140" width="130" height="380" rx="10" fill="none" stroke="#1b1f1c" stroke-width="1.6" />
+    <text x="105" y="124" text-anchor="middle" font-size="16" font-weight="700" letter-spacing="0.03em">HIGO 5-PIN</text>
+    <g font-size="15" font-family="ui-monospace, Consolas, monospace">
+      <circle cx="170" cy="180" r="4.5" fill="#c0392b" />
+      <text x="158" y="185" text-anchor="end"><tspan font-weight="700">1</tspan>  P+</text>
+      <circle cx="170" cy="250" r="4.5" fill="#c0392b" />
+      <text x="158" y="255" text-anchor="end"><tspan font-weight="700">2</tspan>  PL</text>
+      <circle cx="170" cy="320" r="4.5" fill="#217a70" />
+      <text x="158" y="325" text-anchor="end"><tspan font-weight="700">3</tspan>  RxD</text>
+      <circle cx="170" cy="390" r="4.5" fill="#5f6b64" />
+      <text x="158" y="395" text-anchor="end"><tspan font-weight="700">4</tspan>  GND</text>
+      <circle cx="170" cy="460" r="4.5" fill="#a66c12" />
+      <text x="158" y="465" text-anchor="end"><tspan font-weight="700">5</tspan>  TxD</text>
+    </g>
+    <text x="105" y="545" text-anchor="middle" font-size="13" fill-opacity="0.65">controller side</text>
+
+    <!-- ===== P+ / PL wire link (replaces the MOSFET) ===== -->
+    <path d="M170,250 H215 V180" fill="none" stroke="#c0392b" stroke-width="2.4" />
+    <circle cx="215" cy="180" r="4" fill="#c0392b" />
+    <text x="228" y="222" font-size="13" fill="#c0392b" font-weight="600">P+ and PL shorted</text>
+    <text x="228" y="238" font-size="12" fill-opacity="0.65">wire, like in the OTG cable</text>
+
+    <!-- ===== P+ to DC-DC IN+ ===== -->
+    <path d="M170,180 H270 V85 H330" fill="none" stroke="#c0392b" stroke-width="2.4" />
+    <text x="262" y="130" text-anchor="end" font-size="12" fill="#c0392b" font-weight="600">P+ (30-60 V)</text>
+
+    <!-- ===== DC-DC step-down ===== -->
+    <rect x="330" y="55" width="200" height="95" rx="8" fill="none" stroke="#1b1f1c" stroke-width="1.6" />
+    <text x="430" y="44" text-anchor="middle" font-size="15" font-weight="700" letter-spacing="0.03em">DC-DC STEP-DOWN</text>
+    <text x="430" y="108" text-anchor="middle" font-size="13" fill-opacity="0.65">5-60 V in, 5 V out (fixed)</text>
+    <g font-size="13" font-family="ui-monospace, Consolas, monospace">
+      <circle cx="330" cy="85" r="4.5" fill="#c0392b" />
+      <text x="342" y="89">IN+</text>
+      <circle cx="530" cy="85" r="4.5" fill="#c0392b" />
+      <text x="518" y="89" text-anchor="end">OUT+</text>
+      <circle cx="390" cy="150" r="4.5" fill="#5f6b64" />
+      <circle cx="470" cy="150" r="4.5" fill="#5f6b64" />
+      <text x="382" y="172" text-anchor="end">IN-</text>
+      <text x="478" y="172">OUT-</text>
+    </g>
+    <path d="M390,150 V132 H470 V150" fill="none" stroke="#5f6b64" stroke-width="1.4" stroke-dasharray="4 3" />
+    <text x="430" y="127" text-anchor="middle" font-size="11" fill-opacity="0.65">connected inside the module</text>
+
+    <!-- ===== +5V to module VCC ===== -->
+    <path d="M530,85 H700 V290 H760" fill="none" stroke="#c0392b" stroke-width="2.4" />
+    <text x="612" y="76" text-anchor="middle" font-size="13" fill="#c0392b" font-weight="600">+5 V</text>
+
+    <!-- ===== GND bus ===== -->
+    <path d="M170,390 H390 V150" fill="none" stroke="#5f6b64" stroke-width="2.4" />
+    <path d="M470,150 V390 H760" fill="none" stroke="#5f6b64" stroke-width="2.4" />
+    <text x="280" y="382" text-anchor="middle" font-size="13" fill="#5f6b64" font-weight="600">GND from HIGO to IN-</text>
+    <text x="620" y="382" text-anchor="middle" font-size="13" fill="#5f6b64" font-weight="600">OUT- to module GND</text>
+
+    <!-- ===== Signals ===== -->
+    <path d="M760,320 H176" fill="none" stroke="#217a70" stroke-width="2.4" marker-end="url(#arrRx)" />
+    <text x="620" y="312" text-anchor="middle" font-size="13" fill="#217a70" font-weight="600">module TXD to controller RxD  (3.3 V)</text>
+    <path d="M176,460 H754" fill="none" stroke="#a66c12" stroke-width="2.4" marker-end="url(#arrTx)" />
+    <text x="620" y="452" text-anchor="middle" font-size="13" fill="#a66c12" font-weight="600">controller TxD to module RXD  (3.3 V)</text>
+
+    <!-- ===== BT module ===== -->
+    <rect x="760" y="250" width="220" height="250" rx="10" fill="none" stroke="#1b1f1c" stroke-width="1.6" />
+    <text x="870" y="234" text-anchor="middle" font-size="16" font-weight="700" letter-spacing="0.03em">BLUETOOTH MODULE</text>
+    <text x="870" y="278" text-anchor="middle" font-size="14" font-weight="600">HM-10 / HC-06 / BT-06</text>
+    <text x="870" y="426" text-anchor="middle" font-size="12" fill-opacity="0.65">the same 4 wires for all of them</text>
+    <g font-size="14.5" font-family="ui-monospace, Consolas, monospace">
+      <circle cx="760" cy="290" r="4.5" fill="#c0392b" />
+      <text x="774" y="295">VCC</text>
+      <circle cx="760" cy="320" r="4.5" fill="#217a70" />
+      <text x="774" y="325">TXD</text>
+      <circle cx="760" cy="390" r="4.5" fill="#5f6b64" />
+      <text x="774" y="395">GND</text>
+      <circle cx="760" cy="460" r="4.5" fill="#a66c12" />
+      <text x="774" y="465">RXD</text>
+    </g>
+    <text x="870" y="492" text-anchor="middle" font-size="12" fill-opacity="0.65">UART set to 1200 baud (AT+BAUD)</text>
+
+    <!-- ===== Notes ===== -->
+    <g font-size="13.5">
+      <text x="40" y="580" font-weight="700">Not needed any more:</text>
+      <text x="200" y="580">level converter (both sides are 3.3 V logic), separate 3.3 V regulator (the module has its own), MOSFET on P+/PL (permanent wire).</text>
+      <text x="40" y="603" font-weight="700">Ground path:</text>
+      <text x="200" y="603">HIGO GND goes to IN-, OUT- goes to the module GND (no direct GND to GND wire). The DC-DC joins IN- and OUT- inside.</text>
+      <text x="40" y="626" font-weight="700">Note:</text>
+      <text x="200" y="626">with P+ and PL shorted the controller stays on while the bridge is plugged in, and the DC-DC draws a small idle current.</text>
+    </g>
+  </g>
+</svg>

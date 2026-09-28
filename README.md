@@ -36,6 +36,10 @@ Alternative, hybrid diagram (drawn on photos of the real boards):
 
 <img src="Schemat_hybrydowy.png" alt="Hybrid diagram - on photos of the real boards" width="100%">
 
+Simplified wiring V2 (3.3 V logic, no level converter, no MOSFET; supersedes the two diagrams above for the simplified build):
+
+<img src="diagram_v2.svg" alt="Simplified wiring V2: HIGO 5-pin, P+ and PL shorted, DC-DC step-down 5-60V to 5V, Bluetooth module with VCC GND TXD RXD connected directly" width="100%">
+
 ```
 P+ (pin1, 30-60V)  -> step-down IN+                          -> BSS123 Drain
 step-down OUT+ (+5V) -> level shifter HVcc -> HM-10 module VCC (directly)
@@ -113,3 +117,4 @@ soldered together, separately - this is the mechanism that wakes the controller 
 | `Higo5.PNG` | HIGO 5-pin connector, display side (reference only, a different connector) |
 | `Stabilizator.PNG` | 3.3V regulator (e.g. AMS1117-3.3) |
 | `Schemat_hybrydowy.png` | Hybrid diagram on photos of the real boards |
+| `diagram_v2.svg` | Simplified wiring V2 (3.3 V logic, no level converter, no MOSFET) |
