@@ -19,10 +19,9 @@ data on the Android side. Unlike HC-06, HM-10 has a programmable I/O pin (PIO), 
 possible to build a remote, software-controlled switch for the controller, instead of forcing it
 permanently on.
 
-This repo exists so that each design session doesn't have to start from scratch - it collects
-everything that is settled, confirmed and still open. The full, detailed version of this
-documentation: [`research.md`](research.md) (in Polish). The full interactive schematic (with photos attached,
-clickable): [`bt-bridge-wiring.html`](bt-bridge-wiring.html).
+This repo collects everything that is settled, confirmed and still open in this project. The
+full, detailed version of this documentation: [`research.md`](research.md) (in Polish). The full
+interactive schematic (with photos attached, clickable): [`bt-bridge-wiring.html`](bt-bridge-wiring.html).
 
 ## HIGO pin numbering - explained 09.09.2026
 
@@ -45,15 +44,28 @@ physical plug with a multimeter (with the battery connected, the pin at ~30-60V 
 
 ## Wiring diagram
 
-<img src="diagram.svg" alt="Diagram: HIGO 5-pin -> BSS123 MOSFET -> step-down converter -> BSS138 level shifter -> HM-10" width="100%">
-
-Alternative, hybrid diagram (drawn on photos of the real boards):
-
-<img src="Schemat_hybrydowy.png" alt="Hybrid diagram - on photos of the real boards" width="100%">
-
-Simplified wiring V2 (3.3 V logic, no level converter, no MOSFET; supersedes the two diagrams above for the simplified build):
+Simplified wiring V2 (current plan: 3.3 V logic, no level converter, no MOSFET):
 
 <img src="diagram_v2.svg" alt="Simplified wiring V2: HIGO 5-pin, P+ and PL shorted, DC-DC step-down 5-60V to 5V, Bluetooth module with VCC GND TXD RXD connected directly" width="100%">
+
+```
+P+ (pin1, 30-60V)  -> shorted to PL (pin2), like in the original OTG cable
+P+ (pin1)          -> step-down IN+
+GND (pin4)          -> step-down IN-
+step-down OUT-       -> BT module GND (IN- and OUT- are connected inside the converter -
+                        no separate GND to GND wire)
+step-down OUT+ (+5V) -> BT module VCC (HM-10 or HC-06/BT-06 - same wiring for both)
+TxD (pin5)          -> BT module RXD (directly, 3.3 V)
+RxD (pin3)          <- BT module TXD (directly, 3.3 V)
+```
+
+Previous, more complex version (level shifter, MOSFET-controlled P+/PL switch) - superseded by V2 above, kept here as project history:
+
+<img src="diagram.svg" alt="Diagram: HIGO 5-pin -> BSS123 MOSFET -> step-down converter -> BSS138 level shifter -> HM-10" width="100%">
+
+Alternative, hybrid diagram of the previous version (drawn on photos of the real boards):
+
+<img src="Schemat_hybrydowy.png" alt="Hybrid diagram - on photos of the real boards" width="100%">
 
 ```
 P+ (pin1, 30-60V)  -> step-down IN+                          -> BSS123 Drain
@@ -71,22 +83,29 @@ BSS123 Gate         -> R ~10kΩ -> PL (pull-down, OFF by default - the only resi
 
 | Component | Photo | Description |
 |---|---|---|
-| **HM-10** | ![HM-10](HM-10.png) | BLE module, CC2541F256 chip. Pins: RXD, TXD, GND, VCC (3.6-6V), PIO (drives the MOSFET gate). This unit does not expose an internal 3.3V - a separate regulator is needed for the level shifter's LVcc. |
-| **Step-down converter P+ → 5V** | ![Step-down converter](DC-DC_StepDown_DC5-60V_5V.PNG) | 5-60V → 5V module, fixed output, 4 pins IN+/IN-/OUT+/OUT-, input capacitor rated 63V. The one and only converter chosen for the project (the earlier XL7015 candidate was rejected). |
-| **Logic level shifter** | ![Level shifter](Konwerter.png) | 4-channel, BSS138-based. Two independent rails: HVcc (5V) and LVcc (3.3V, from a separate regulator, e.g. AMS1117-3.3). |
-| **BSS123 MOSFET** | ![BSS123](BSS_123.jpeg) | N-channel, logic-level, SOT-23, 100V/0.17A continuous. Replaces the former fixed wire bridge between P+ and PL - Drain→P+, Source→PL, Gate←PIO (HM-10), **directly, with no series resistor** (that is only an optional good practice, not a requirement - deliberately left out for simplicity). The only resistor in this path is the Gate→PL pull-down (~10kΩ), which keeps the MOSFET OFF by default during HM-10 startup/reset. |
-| **3.3V regulator** | ![Regulator](Stabilizator.PNG) | E.g. AMS1117-3.3, 12.3×8.6mm module, pins VIN/OUT/GND. Powers the level shifter's LVcc (this HM-10 unit does not expose an internal 3.3V). |
+| **HM-10** | ![HM-10](HM-10.png) | BLE module, CC2541F256 chip. Pins: RXD, TXD, GND, VCC (3.6-6V), PIO (not used for now - see the wiring diagram above). This unit does not expose an internal 3.3V, but that no longer matters since it is powered directly from the 5V step-down converter. |
+| **HC-06 (ZS-040 type)** | (no photo in this repo) | Bluetooth Classic (SPP) module, e.g. the Botland ZS-040 offer. Supply 3.6-6V (own onboard regulator), 3.3V communication logic. Default 9600 baud, PIN 1234. AT commands: `AT`, `AT+BAUDx` (1=1200 ... 8=115200), `AT+NAME`, `AT+PIN`, parity - no GPIO/PIO command. |
+| **BT-06 (DSD TECH)** | (no photo in this repo) | Same family as HC-06 (BC417 chip), 4 pins only (VCC, GND, TXD, RXD, no LED/KEY), 3.6-6V, "TTL level 3.3V", default 9600 baud, PIN 1234. Harder to find locally than a plain HC-06 - see "To do" below. |
+| **Step-down converter P+ → 5V** | ![Step-down converter](DC-DC_StepDown_DC5-60V_5V.PNG) | 5-60V → 5V module, fixed output, 4 pins IN+/IN-/OUT+/OUT-, input capacitor rated 63V. The one and only converter chosen for the project (the earlier XL7015 candidate was rejected). IN- and OUT- are connected inside the module (non-isolated type) - to be verified with a continuity check before building. |
 | **HIGO 5-pin connector** | ![HIGO5](Wtyczka_HIGO5.png) | The controller's programming connector. |
 | **HIGO5 reference photo (display side)** | ![Higo5 ref](Higo5.PNG) | A different connector, not directly related (the other gender of the plug) - reference only, see the explanation above. |
 
-### Why the BSS123 (100V/0.17A) is enough
+### Previous version: MOSFET-based remote switch (project history, not part of the current build)
+
+| Component | Photo | Description |
+|---|---|---|
+| **Logic level shifter** | ![Level shifter](Konwerter.png) | 4-channel, BSS138-based. Two independent rails: HVcc (5V) and LVcc (3.3V, from a separate regulator, e.g. AMS1117-3.3). Not needed now that both sides are confirmed to use 3.3V logic. |
+| **BSS123 MOSFET** | ![BSS123](BSS_123.jpeg) | N-channel, logic-level, SOT-23, 100V/0.17A continuous. Was meant to replace the fixed wire bridge between P+ and PL with a remote switch - Drain→P+, Source→PL, Gate←PIO (HM-10), **directly, with no series resistor** (that is only an optional good practice, not a requirement - deliberately left out for simplicity). The only resistor in this path is the Gate→PL pull-down (~10kΩ), which keeps the MOSFET OFF by default during HM-10 startup/reset. Currently P+ and PL are simply shorted with a wire instead, like in the original OTG cable. |
+| **3.3V regulator** | ![Regulator](Stabilizator.PNG) | E.g. AMS1117-3.3, 12.3×8.6mm module, pins VIN/OUT/GND. Was needed to power the level shifter's LVcc. |
+
+#### Why the BSS123 (100V/0.17A) was enough
 
 Specification of the Bafang DPC18 display
 ([california-ebike.com](https://california-ebike.com/products/bafang-color-display-dpc18)):
 rated current 10mA, max operating current 30mA, standby leakage <1µA, supply to the controller 50mA.
 Real currents on the P+/PL line are a few tens of mA - a huge margin against the MOSFET's 170mA.
 
-### Rejected P+/PL switch options
+#### Rejected P+/PL switch options
 
 - **NTR4170N** - a mistake from memory, the datasheet showed only 30V - too little, DO NOT USE.
 - **Ready-made relay modules "10A 250VAC/10A 30VDC"** - the 30VDC rating is too low (P+ can reach ~58V).
@@ -104,16 +123,25 @@ soldered together, separately - this is the mechanism that wakes the controller 
 ## To confirm before soldering
 
 - HIGO pin numbering (controller side) - explained, see the section at the top, but still worth verifying with a multimeter (it comes only indirectly from a forum thread).
-- The real UART logic level of the controller (3.3V or 5V) - undetermined and deliberately
-  left unresolved: the level shifter's HVcc is set to 5V as a safe superset, the BSS138 pulls up
-  with a resistor to HVcc, so an active 3.3V driver on the controller side wins anyway - nothing
-  gets damaged in either case.
+- The controller UART logic level is now taken as settled at 3.3V (confirmed by the original
+  programming cable, which talks to the controller on 3.3V logic - see "Photos from
+  disassembling the original programming cable" below), so no level converter is planned.
+- Set the BT module to 1200 baud via AT commands (`AT+BAUD1` for HC-06/BT-06) before soldering -
+  needs a 3.3V USB-UART adapter, module unpaired, no line ending.
+- Change the module's default pairing PIN (`AT+PIN`) - the default 1234/000000 would let anyone
+  nearby pair and write to the controller.
+- If buying a generic HC-06 clone, test each unit before soldering: `AT` -> `OK`,
+  `AT+VERSION`, `AT+BAUD1` -> `OK1200`.
 
 ## To do
 
 1. Verify the HIGO pin numbering with a multimeter before soldering.
-2. Physically assemble the circuit on a board/prototype - the diagram and component selection are already done,
-   what is missing is the actual assembly and a test on a real controller.
+2. Buy an HC-06 module (locally, e.g. Allegro - AliExpress import fees currently make it not
+   worth it for a single unit) and test it with AT commands.
+3. Set the module to 1200 baud.
+4. Physically assemble the simplified circuit (diagram V2 above) on a board/prototype.
+5. Test on a real controller - **OEM Bafang first** (the large majority of EggSPEED users),
+   then bbs-fw: read/telemetry first, writes after.
 
 ## Files in the repo
 
@@ -121,7 +149,7 @@ soldered together, separately - this is the mechanism that wakes the controller 
 |---|---|
 | `research.md` | The full, detailed version of this documentation (in Polish) |
 | `bt-bridge-wiring.html` | The full interactive diagram |
-| `diagram.svg` | The vector diagram only (no photos), used in this README |
+| `diagram.svg` | The vector diagram of the previous, more complex version (superseded by `diagram_v2.svg`) |
 | `HM-10.png`, `HM-10_appka_screenshot.jpg` | Photos of the HM-10 module |
 | `KabelUSB_1.jpeg`, `KabelUSB_2.jpeg` | Disassembly of the original programming cable |
 | `Konwerter.png` | Logic level shifter (BSS138) |
