@@ -122,6 +122,33 @@ moduł dostanie pierwszą integrację w EggSPEED, zapada po testach na OEM.
   wewnątrz modułu (typ nieizolowany) - do zweryfikowania miernikiem ciągłości przed budową.
 - **Złącze HIGO 5-pin** (`Wtyczka_HIGO5.png`).
 
+### Komendy AT HC-06 (referencja)
+
+Ustawienia fabryczne: slave, 9600 N81, nazwa "linvor", PIN 1234.
+
+```
+AT                  test komunikacji, odpowiedź OK
+
+AT+BAUD1            1200
+AT+BAUD2            2400
+AT+BAUD3            4800
+AT+BAUD4            9600
+AT+BAUD5            19200
+AT+BAUD6            38400
+AT+BAUD7            57600
+AT+BAUD8            115200
+
+AT+NAMEname1        zmiana nazwy urządzenia
+AT+PIN1234          zmiana kodu parowania
+AT+VERSION          wersja firmware
+
+AT+PN               brak parzystości (tylko wersje firmware >1.5)
+AT+PO               parzystość nieparzysta
+AT+PE               parzystość parzysta
+```
+
+Dla naszego mostka istotna jest `AT+BAUD1` (1200 baud, docelowa prędkość kontrolera Bafang).
+
 ## Aktualny schemat połączeń (uproszczony, bez konwertera i bez MOSFET-a)
 
 Pełny diagram wektorowy: [`diagram_v2.svg`](diagram_v2.svg). Poprzedni, bardziej rozbudowany
