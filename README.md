@@ -1,8 +1,23 @@
 # UART-BT Converter
 
-A hardware bridge between the UART of a Bafang controller (HIGO 5-pin programming connector) and a phone
-over Bluetooth (HM-10 module) - the [EggSPEED](https://github.com/moskil2/EggSPEED) app connects
-without a USB OTG cable. In the EggSPEED README this is the "Roadmap" item - **A Bluetooth module replacing the USB OTG cable - 20%**.
+A hardware bridge between the UART of a Bafang controller (HIGO 5-pin programming connector) and a
+phone over Bluetooth, so the [EggSPEED](https://github.com/moskil2/EggSPEED) app connects without a
+USB OTG cable.
+
+Two module types are being evaluated, and they are not interchangeable: each speaks a different
+Bluetooth protocol, with no shared "Bluetooth" layer underneath, so each needs its own, separate
+integration into EggSPEED.
+
+**HC-06** is a classic Bluetooth (Bluetooth Classic, SPP profile) module. It pairs like a wireless
+serial cable: Windows and Android see it as a virtual serial port, and once paired it behaves
+exactly like the original OTG cable, forcing the controller permanently on for as long as the
+module is powered. It has no programmable output pin.
+
+**HM-10** is a Bluetooth Low Energy (BLE) module. Instead of a virtual serial port, an app talks to
+it through a GATT service/characteristic, in small packets, which is a different way of exchanging
+data on the Android side. Unlike HC-06, HM-10 has a programmable I/O pin (PIO), which makes it
+possible to build a remote, software-controlled switch for the controller, instead of forcing it
+permanently on.
 
 This repo exists so that each design session doesn't have to start from scratch - it collects
 everything that is settled, confirmed and still open. The full, detailed version of this
