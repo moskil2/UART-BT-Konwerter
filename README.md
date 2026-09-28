@@ -105,7 +105,7 @@ soldered together, separately - this is the mechanism that wakes the controller 
 | File | What it is |
 |---|---|
 | `research.md` | The full, detailed version of this documentation (in Polish) |
-| `bt-bridge-wiring.html` | The full interactive diagram (same as the "BT Bridge Wiring" Artifact) |
+| `bt-bridge-wiring.html` | The full interactive diagram |
 | `diagram.svg` | The vector diagram only (no photos), used in this README |
 | `HM-10.png`, `HM-10_appka_screenshot.jpg` | Photos of the HM-10 module |
 | `KabelUSB_1.jpeg`, `KabelUSB_2.jpeg` | Disassembly of the original programming cable |

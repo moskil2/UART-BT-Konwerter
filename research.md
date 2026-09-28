@@ -11,9 +11,8 @@ wszystko co ustalone, potwierdzone i wciąż otwarte.
 
 Wcześniej ten katalog opisywał dwie osobne, niespójne wersje projektu (wersja 1 - stały mostek
 P+/PL bez zdalnego sterowania; wersja 2 - dodanie MOSFET-a do zdalnego włącz/wyłącz). **09.09
-schemat (`bt-bridge-wiring.html`, ten sam plik co Artifact "BT Bridge Wiring") został scalony w
-jedną, spójną wersję** - patrz sekcja "Aktualny schemat" niżej. Artifact zaktualizowany pod tym
-samym linkiem: https://claude.ai/code/artifact/c50ae686-184f-428b-8734-26c2a34c23c5
+schemat (`bt-bridge-wiring.html`) został scalony w jedną, spójną wersję** - patrz sekcja
+"Aktualny schemat" niżej.
 
 ## Numeracja pinów HIGO - wyjaśnione 09.09.2026
 
@@ -132,7 +131,7 @@ BSS123 Gate         -> R ~10kΩ -> PL (pull-down, domyślnie OFF - jedyny rezyst
 
 | Plik | Co to jest |
 |---|---|
-| `bt-bridge-wiring.html` | Pełny interaktywny schemat (scalony, 09.09.2026) - ten sam co Artifact "BT Bridge Wiring" |
+| `bt-bridge-wiring.html` | Pełny interaktywny schemat (scalony, 09.09.2026) |
 | `HM-10.png` | Zdjęcie modułu HM-10 (piny: RXD/TXD/GND/VCC) |
 | `KabelUSB_1.jpeg`, `KabelUSB_2.jpeg` | Zdjęcia z rozbiórki oryginalnego kabla programującego - potwierdzenie zwarcia P+/PL i numeracji pinów HIGO |
 | `Konwerter.png` | Zdjęcie 4-kanałowego konwertera poziomów logicznych (BSS138) |
