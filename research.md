@@ -7,8 +7,7 @@ Rozważane są dwa, niekompatybilne ze sobą moduły - **HC-06** i **HM-10** - p
 "HC-06 kontra HM-10" niżej. Celem numer 1 jest obsługa **OEM Bafang** (zdecydowana większość
 użytkowników EggSPEED), bbs-fw dopiero po nim.
 
-Ten plik istnieje, żeby NIE zaczynać tematu od zera przy każdej kolejnej rozmowie - zbiera
-wszystko co ustalone, potwierdzone i wciąż otwarte.
+Ten plik zbiera wszystko, co dotąd ustalone, potwierdzone i wciąż otwarte w tym projekcie.
 
 ## Poziom logiki UART kontrolera: 3,3V (ustalone)
 
