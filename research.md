@@ -22,19 +22,29 @@ przyjmujemy jako pewnik, bez dalszych zastrzeżeń. Konsekwencja: **konwerter po
 i osobny regulator 3,3V są zbędne** - oba moduły (HC-06, HM-10) mają logikę 3,3V i podłącza się
 je bezpośrednio.
 
-## Status: uproszczony mostek, bez MOSFET-a na razie
+## Status: przełącznik ON/OFF na P+/PL, bez konwertera poziomów (V3)
 
 Wcześniejsze wersje tego projektu (do 09.09.2026) zakładały konwerter poziomów logicznych
 (BSS138), osobny stabilizator 3,3V dla HM-10 i MOSFET BSS123 do zdalnego włączania/wyłączania
 kontrolera przez PIO. Po ustaleniu poziomu 3,3V (wyżej) konwerter i stabilizator odpadają.
-**MOSFET na razie też odpada** - P+ i PL są po prostu zwarte przewodem, dokładnie jak w
-oryginalnym kablu OTG (patrz "Aktualny schemat połączeń" niżej). Skutek: kontroler jest włączony
-przez cały czas, gdy mostek jest wpięty, a przetwornica pobiera niewielki prąd spoczynkowy z P+
-nawet gdy rower stoi (P+ ma napięcie baterii niezależnie od tego, czy kontroler jest włączony).
+
+Wersja V2 (28.09.2026) upraszczała to jeszcze bardziej - P+ i PL zwarte na stałe przewodem,
+dokładnie jak w oryginalnym kablu OTG. Skutkiem było to, że kontroler jest włączony przez cały
+czas, gdy mostek jest wpięty, a przetwornica pobiera niewielki prąd spoczynkowy z P+ nawet gdy
+rower stoi (P+ ma napięcie baterii niezależnie od tego, czy kontroler jest włączony).
+
+**Wersja V3 (aktualna) dodaje zwykły przełącznik ON/OFF na linii P+/PL** - inspirowane zgłoszeniem
+GitHub issue #1, ale bez jego rozbudowanej części (przełącznik 3-pozycyjny LCD/BT z diodami
+izolującymi - to rozwiązanie dla mieszanego układu LCD+BT, którego tu nie budujemy). Przetwornica
+(IN+) jest podpięta **po stronie PL przełącznika**, nie bezpośrednio z P+, więc jeden przełącznik
+wyłącza jednocześnie kontroler (brak sygnału wybudzenia na PL) i moduł BT (brak zasilania
+przetwornicy). Diody nie są potrzebne - nie ma tu drugiego obwodu (np. wyświetlacza LCD)
+współdzielącego pin PL, z którym trzeba by się izolować.
 
 Stary, bardziej rozbudowany schemat z MOSFET-em i konwerterem poziomów zostaje w repo
-(`diagram.svg`, `bt-bridge-wiring.html`, `Schemat_hybrydowy.png`) jako poprzednia wersja, ale nie
-jest już domyślnym planem budowy - domyślny jest uproszczony schemat V2 (`diagram_v2.svg`).
+(`diagram.svg`, `bt-bridge-wiring.html`, `Schemat_hybrydowy.png`) jako poprzednia wersja, tak samo
+V2 (`diagram_v2.svg`, stałe zwarcie bez przełącznika) - domyślny jest teraz schemat V3
+(`diagram_v3.svg`).
 
 ## Numeracja pinów HIGO - wyjaśnione 09.09.2026
 
@@ -149,22 +159,28 @@ AT+PE               parzystość parzysta
 
 Dla naszego mostka istotna jest `AT+BAUD1` (1200 baud, docelowa prędkość kontrolera Bafang).
 
-## Aktualny schemat połączeń (uproszczony, bez konwertera i bez MOSFET-a)
+## Aktualny schemat połączeń (V3 - przełącznik ON/OFF, bez konwertera i bez MOSFET-a)
 
-Pełny diagram wektorowy: [`diagram_v2.svg`](diagram_v2.svg). Poprzedni, bardziej rozbudowany
-wariant (z konwerterem poziomów i MOSFET-em) nadal w [`diagram.svg`](diagram.svg) i
-[`bt-bridge-wiring.html`](bt-bridge-wiring.html).
+Pełny diagram wektorowy: [`diagram_v3.svg`](diagram_v3.svg). Poprzednie wersje: uproszczona bez
+przełącznika [`diagram_v2.svg`](diagram_v2.svg), i bardziej rozbudowana, z konwerterem poziomów i
+MOSFET-em, w [`diagram.svg`](diagram.svg) i [`bt-bridge-wiring.html`](bt-bridge-wiring.html).
 
 ```
-P+ (pin1, 30-60V)  -> zwarte z PL (pin2), jak w oryginalnym kablu OTG
-P+ (pin1)          -> przetwornica IN+
+P+ (pin1, 30-60V)  -> przełącznik ON/OFF -> PL (pin2)
+                                          -> przetwornica IN+ (odczep po stronie PL, za przełącznikiem)
 GND (pin4)          -> przetwornica IN-
 przetwornica OUT-   -> GND modułu BT (IN- i OUT- połączone wewnątrz przetwornicy - nie ma
                         osobnego przewodu GND-GND)
 przetwornica OUT+ (+5V) -> VCC modułu BT (HM-10 lub HC-06/BT-06 - ten sam schemat dla obu)
-TxD (pin5)          -> RXD modułu BT (bezpośrednio, 3,3V)
+TxD (pin5)          -> [opcjonalnie 1kΩ szeregowo] -> RXD modułu BT (3,3V)
+                       [opcjonalnie 2kΩ podciągające do masy, po stronie RXD]
 RxD (pin3)          <- TXD modułu BT (bezpośrednio, 3,3V)
 ```
+
+Dzielnik 1kΩ/2kΩ na linii TxD→RXD pochodzi ze zgłoszenia GitHub issue #1 (działający układ na
+HC-06) - jest opcjonalny i niepotwierdzony pomiarem multimetrem na naszym kontrolerze. Przełącznik
+nie wymaga diod (w odróżnieniu od rozwiązania z tego zgłoszenia) - nie ma tu drugiego obwodu
+(np. LCD) dzielącego pin PL, z którym trzeba by się izolować.
 
 ## Do potwierdzenia / do zrobienia przed lutowaniem
 
@@ -187,7 +203,8 @@ RxD (pin3)          <- TXD modułu BT (bezpośrednio, 3,3V)
 
 | Plik | Co to jest |
 |---|---|
-| `diagram_v2.svg` | Aktualny, uproszczony schemat (bez konwertera poziomów, bez MOSFET-a) |
+| `diagram_v3.svg` | Aktualny schemat - przełącznik ON/OFF na P+/PL, opcjonalny dzielnik na TxD→RXD |
+| `diagram_v2.svg` | Poprzedni, uproszczony schemat (bez przełącznika, P+/PL zwarte na stałe) |
 | `bt-bridge-wiring.html` | Poprzedni, pełny interaktywny schemat (z konwerterem i MOSFET-em, scalony 09.09.2026) |
 | `HM-10.png` | Zdjęcie modułu HM-10 (piny: RXD/TXD/GND/VCC) |
 | `KabelUSB_1.jpeg`, `KabelUSB_2.jpeg` | Zdjęcia z rozbiórki oryginalnego kabla programującego - potwierdzenie zwarcia P+/PL, numeracji pinów HIGO i poziomu logiki 3,3V |
@@ -206,6 +223,6 @@ RxD (pin3)          <- TXD modułu BT (bezpośrednio, 3,3V)
 1. Kupić moduł HC-06 (Allegro, krajowo, od ok. 20 zł - nie AliExpress, opłaty celne zjadają
    oszczędność) i przetestować go komendami AT przed lutowaniem.
 2. Ustawić moduł (HC-06 lub HM-10, ten który testujemy jako pierwszy) na 1200 baud.
-3. Złożyć uproszczony układ (`diagram_v2.svg`) na płytce/prototypie.
+3. Złożyć układ V3 (`diagram_v3.svg`) na płytce/prototypie.
 4. Przetestować na prawdziwym kontrolerze - **najpierw OEM Bafang, potem bbs-fw**: najpierw
    odczyt/telemetria, dopiero potem zapis.

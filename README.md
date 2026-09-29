@@ -44,7 +44,27 @@ physical plug with a multimeter (with the battery connected, the pin at ~30-60V 
 
 ## Wiring diagram
 
-Simplified wiring V2 (current plan: 3.3 V logic, no level converter, no MOSFET):
+Wiring V3 (adds an ON/OFF switch on P+/PL, optional TxD divider - current preferred variant):
+
+<img src="diagram_v3.svg" alt="Wiring V3: HIGO 5-pin, ON/OFF switch between P+ and PL, DC-DC step-down IN+ tapped on the PL side of the switch, optional 1k/2k divider on TxD to module RXD" width="100%">
+
+```
+P+ (pin1, 30-60V)  -> ON/OFF switch -> PL (pin2)
+                                    -> step-down IN+ (tapped on the PL side of the switch)
+GND (pin4)          -> step-down IN-
+step-down OUT-       -> BT module GND (IN- and OUT- are connected inside the converter -
+                        no separate GND to GND wire)
+step-down OUT+ (+5V) -> BT module VCC (HM-10 or HC-06/BT-06 - same wiring for both)
+TxD (pin5)          -> [optional 1kΩ series] -> BT module RXD (3.3 V; see divider note below)
+                       [optional 2kΩ pull-down to GND on the RXD side]
+RxD (pin3)          <- BT module TXD (directly, 3.3 V)
+```
+
+Switch OFF fully powers down both the controller and the BT module together. The 1kΩ/2kΩ
+divider on TxD -> RXD comes from a reader's working build (GitHub issue #1, HC-06) - it is
+optional here and not yet confirmed by a multimeter measurement on this repo's own controller.
+
+Previous variant (no ON/OFF switch, superseded by V3 above):
 
 <img src="diagram_v2.svg" alt="Simplified wiring V2: HIGO 5-pin, P+ and PL shorted, DC-DC step-down 5-60V to 5V, Bluetooth module with VCC GND TXD RXD connected directly" width="100%">
 
@@ -160,4 +180,5 @@ soldered together, separately - this is the mechanism that wakes the controller 
 | `Higo5.PNG` | HIGO 5-pin connector, display side (reference only, a different connector) |
 | `Stabilizator.PNG` | 3.3V regulator (e.g. AMS1117-3.3) |
 | `Schemat_hybrydowy.png` | Hybrid diagram on photos of the real boards |
-| `diagram_v2.svg` | Simplified wiring V2 (3.3 V logic, no level converter, no MOSFET) |
+| `diagram_v2.svg` | Simplified wiring V2 (3.3 V logic, no level converter, no MOSFET, no switch) |
+| `diagram_v3.svg` | Wiring V3 - adds an ON/OFF switch on P+/PL and an optional TxD divider (current preferred variant) |
