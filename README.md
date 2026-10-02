@@ -104,7 +104,7 @@ BSS123 Gate         -> R ~10kΩ -> PL (pull-down, OFF by default - the only resi
 | Component | Photo | Description |
 |---|---|---|
 | **HM-10** | ![HM-10](HM-10.png) | BLE module, CC2541F256 chip. Pins: RXD, TXD, GND, VCC (3.6-6V), PIO (not used for now - see the wiring diagram above). This unit does not expose an internal 3.3V, but that no longer matters since it is powered directly from the 5V step-down converter. |
-| **HC-06 (ZS-040 type)** | (no photo in this repo) | Bluetooth Classic (SPP) module, e.g. the Botland ZS-040 offer. Supply 3.6-6V (own onboard regulator), 3.3V communication logic. Default 9600 baud, PIN 1234. AT commands: `AT`, `AT+BAUDx` (1=1200 ... 8=115200), `AT+NAME`, `AT+PIN`, parity - no GPIO/PIO command. |
+| **HC-06 (ZS-040 type)** | ![HC-06](HC-06.PNG) | Bluetooth Classic (SPP) module, e.g. the Botland ZS-040 offer. Supply 3.6-6V (own onboard regulator), 3.3V communication logic. Default 9600 baud, PIN 1234. AT commands: `AT`, `AT+BAUDx` (1=1200 ... 8=115200), `AT+NAME`, `AT+PIN`, parity - no GPIO/PIO command. |
 | **BT-06 (DSD TECH)** | (no photo in this repo) | Same family as HC-06 (BC417 chip), 4 pins only (VCC, GND, TXD, RXD, no LED/KEY), 3.6-6V, "TTL level 3.3V", default 9600 baud, PIN 1234. Harder to find locally than a plain HC-06 - see "To do" below. |
 | **Step-down converter P+ → 5V** | ![Step-down converter](DC-DC_StepDown_DC5-60V_5V.PNG) | 5-60V → 5V module, fixed output, 4 pins IN+/IN-/OUT+/OUT-, input capacitor rated 63V. The one and only converter chosen for the project (the earlier XL7015 candidate was rejected). IN- and OUT- are connected inside the module (non-isolated type) - to be verified with a continuity check before building. |
 | **HIGO 5-pin connector** | ![HIGO5](Wtyczka_HIGO5.png) | The controller's programming connector. |
@@ -182,3 +182,4 @@ soldered together, separately - this is the mechanism that wakes the controller 
 | `Schemat_hybrydowy.png` | Hybrid diagram on photos of the real boards |
 | `diagram_v2.svg` | Simplified wiring V2 (3.3 V logic, no level converter, no MOSFET, no switch) |
 | `diagram_v3.svg` | Wiring V3 - adds an ON/OFF switch on P+/PL and an optional TxD divider (current preferred variant) |
+| `HC-06.PNG` | Photo of the HC-06 module with pinout (VCC, GND, TXD, RXD) |
