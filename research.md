@@ -9,7 +9,7 @@ użytkowników EggSPEED), bbs-fw dopiero po nim.
 
 Ten plik zbiera wszystko, co dotąd ustalone, potwierdzone i wciąż otwarte w tym projekcie.
 
-## Poziom logiki UART kontrolera: 3,3V (ustalone)
+## Poziom logiki UART kontrolera: RX 3,3V (ustalone), TX ~4,6V (zmierzone)
 
 Rozbiórka oryginalnego kabla programującego (`KabelUSB_1.jpeg`, `KabelUSB_2.jpeg`) pokazała, że
 w środku jest zwykła płytka USB-UART z opisanymi pinami 5V/VCC/3V3/TXD/RXD/GND, a żółta zworka
@@ -18,9 +18,21 @@ złącza HIGO idą tylko TXD, RXD i GND (P+/PL są zwarte osobno, patrz niżej) 
 podłączone.
 
 Takich kabli sprzedaje się tysiące i działają na kontrolerach BBS (OEM i bbs-fw) - to
-przyjmujemy jako pewnik, bez dalszych zastrzeżeń. Konsekwencja: **konwerter poziomów logicznych
-i osobny regulator 3,3V są zbędne** - oba moduły (HC-06, HM-10) mają logikę 3,3V i podłącza się
-je bezpośrednio.
+przyjmujemy jako pewnik, bez dalszych zastrzeżeń. To potwierdza kierunek **moduł → kontroler**
+(TXD modułu BT do RxD kontrolera, pin 3) na 3,3V - ten kierunek łączy się bezpośrednio, bez
+żadnego dzielnika ani konwertera.
+
+Kierunek **kontroler → moduł** (TxD kontrolera, pin 5) to osobna linia, której kabel OTG sam w
+sobie nie rozstrzygał. Krzysztof (GitHub issue #1) zmierzył ją bezpośrednio multimetrem na swoim
+kontrolerze: **TxD trzyma ~4,6V** (logika Bafanga siedzi na wewnętrznej szynie 5V), zarówno w
+spoczynku, jak i na impulsach. Konsekwencja: na tej jednej linii zostaje prosty dzielnik
+rezystorowy 1kΩ/2kΩ (patrz "Aktualny schemat połączeń" niżej) - zbija ~4,6V do bezpiecznych
+~3,1V dla wejścia RXD modułu. **Konwerter poziomów logicznych (4-kanałowy) i osobny regulator
+3,3V nadal są zbędne** - to inny, dużo prostszy problem niż to, co rozwiązywał tamten konwerter z
+poprzedniej wersji projektu, i dotyczy tylko jednej linii, nie całego interfejsu.
+
+Pomiar 4,6V pochodzi z kontrolera Krzysztofa, nie z naszego - różne rewizje sprzętu mogą się
+nieznacznie różnić, więc własny pomiar multimetrem przed lutowaniem na stałe nadal ma sens.
 
 ## Status: przełącznik ON/OFF na P+/PL, bez konwertera poziomów (V3)
 
@@ -172,14 +184,15 @@ GND (pin4)          -> przetwornica IN-
 przetwornica OUT-   -> GND modułu BT (IN- i OUT- połączone wewnątrz przetwornicy - nie ma
                         osobnego przewodu GND-GND)
 przetwornica OUT+ (+5V) -> VCC modułu BT (HM-10 lub HC-06/BT-06 - ten sam schemat dla obu)
-TxD (pin5)          -> [opcjonalnie 1kΩ szeregowo] -> RXD modułu BT (3,3V)
-                       [opcjonalnie 2kΩ podciągające do masy, po stronie RXD]
+TxD (pin5, ~4,6V)   -> [1kΩ szeregowo] -> RXD modułu BT (~3,1V po dzielniku)
+                       [2kΩ podciągające do masy, po stronie RXD]
 RxD (pin3)          <- TXD modułu BT (bezpośrednio, 3,3V)
 ```
 
 Dzielnik 1kΩ/2kΩ na linii TxD→RXD pochodzi ze zgłoszenia GitHub issue #1 (działający układ na
-HC-06) - jest opcjonalny i niepotwierdzony pomiarem multimetrem na naszym kontrolerze. Przełącznik
-nie wymaga diod (w odróżnieniu od rozwiązania z tego zgłoszenia) - nie ma tu drugiego obwodu
+HC-06) i jest **zalecany** - Krzysztof zmierzył TxD kontrolera bezpośrednio na ~4,6V (patrz sekcja
+o poziomie logiki wyżej), to nie jest już tylko ostrożność "na wszelki wypadek". Przełącznik nie
+wymaga diod (w odróżnieniu od rozwiązania z tego zgłoszenia) - nie ma tu drugiego obwodu
 (np. LCD) dzielącego pin PL, z którym trzeba by się izolować.
 
 ## Do potwierdzenia / do zrobienia przed lutowaniem
@@ -198,12 +211,15 @@ nie wymaga diod (w odróżnieniu od rozwiązania z tego zgłoszenia) - nie ma tu
   `AT` -> `OK`, `AT+VERSION`, `AT+BAUD1` -> `OK1200`.
 - Fizyczne złożenie układu na płytce/prototypie i test na prawdziwym kontrolerze - **najpierw
   OEM, potem bbs-fw** (patrz "HC-06 kontra HM-10" wyżej).
+- Pomiar ~4,6V na TxD kontrolera pochodzi z innego egzemplarza (Krzysztof, issue #1) - warto
+  potwierdzić multimetrem na własnym kontrolerze przed lutowaniem, mimo że dzielnik 1kΩ/2kΩ
+  i tak daje spory margines bezpieczeństwa.
 
 ## Pliki w tym katalogu
 
 | Plik | Co to jest |
 |---|---|
-| `diagram_v3.svg` | Aktualny schemat - przełącznik ON/OFF na P+/PL, opcjonalny dzielnik na TxD→RXD |
+| `diagram_v3.svg` | Aktualny schemat - przełącznik ON/OFF na P+/PL, zalecany dzielnik na TxD→RXD |
 | `diagram_v2.svg` | Poprzedni, uproszczony schemat (bez przełącznika, P+/PL zwarte na stałe) |
 | `bt-bridge-wiring.html` | Poprzedni, pełny interaktywny schemat (z konwerterem i MOSFET-em, scalony 09.09.2026) |
 | `HM-10.png` | Zdjęcie modułu HM-10 (piny: RXD/TXD/GND/VCC) |

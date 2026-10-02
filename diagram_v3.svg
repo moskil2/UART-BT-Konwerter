@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 665" role="img" aria-label="Wiring diagram V3. Left: numbered HIGO 5-pin connector of the Bafang controller (1 P+, 2 PL, 3 RxD, 4 GND, 5 TxD). An ON/OFF switch sits between P+ and PL, replacing the permanent short of V2. The DC-DC step-down converter's IN+ pin is tapped from the switch's PL side, below the switch symbol, not directly from P+, so turning the switch off removes power from PL (the controller wake signal) and from the converter (and therefore the Bluetooth module) at the same time. An optional 1k ohm series resistor plus a 2k ohm pull-down to ground form a voltage divider on the controller TxD to module RXD line, from a reader's working build (GitHub issue #1), not yet confirmed by measurement on this repo's own controller. When on, the converter's 5V output powers the VCC pin of the Bluetooth module (HM-10, HC-06 or BT-06). Controller GND goes to the converter IN- pin and the converter OUT- pin goes to the module GND, with no direct GND to GND wire, because IN- and OUT- are connected inside the non-isolated converter. Controller TxD goes to the module RXD, and the module TXD goes to the controller RxD, directly, because both sides use 3.3V logic. No level converter, no MOSFET, no 3.3V regulator.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 665" role="img" aria-label="Wiring diagram V3. Left: numbered HIGO 5-pin connector of the Bafang controller (1 P+, 2 PL, 3 RxD, 4 GND, 5 TxD). An ON/OFF switch sits between P+ and PL, replacing the permanent short of V2. The DC-DC step-down converter's IN+ pin is tapped from the switch's PL side, below the switch symbol, not directly from P+, so turning the switch off removes power from PL (the controller wake signal) and from the converter (and therefore the Bluetooth module) at the same time. A recommended 1k ohm series resistor plus a 2k ohm pull-down to ground form a voltage divider on the controller TxD to module RXD line, because the controller's TxD runs on its own 5V logic rail (measured at about 4.6 volts on a reader's Bafang controller, GitHub issue #1) and the divider brings that down to a safe level for the module's RXD input. When on, the converter's 5V output powers the VCC pin of the Bluetooth module (HM-10, HC-06 or BT-06). Controller GND goes to the converter IN- pin and the converter OUT- pin goes to the module GND, with no direct GND to GND wire, because IN- and OUT- are connected inside the non-isolated converter. The module TXD goes to the controller RxD directly, because that line is confirmed at 3.3V logic from the original programming cable. No level converter, no MOSFET, no 3.3V regulator.">
   <rect x="0" y="0" width="1100" height="665" fill="#ffffff"/>
   <defs>
     <marker id="arrTx" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
@@ -11,7 +11,7 @@
   <g font-family="Segoe UI, Arial, Helvetica, sans-serif" fill="#1b1f1c">
 
     <!-- ===== Title ===== -->
-    <text x="550" y="22" text-anchor="middle" font-size="19" font-weight="700">UART-BT bridge - wiring V3 (switchable P+/PL, 3.3 V logic)</text>
+    <text x="550" y="22" text-anchor="middle" font-size="19" font-weight="700">UART-BT bridge - wiring V3 (switchable P+/PL, TxD divider)</text>
 
     <!-- ===== HIGO 5-pin connector (controller side) ===== -->
     <rect x="40" y="140" width="130" height="380" rx="10" fill="none" stroke="#1b1f1c" stroke-width="1.6" />
@@ -78,7 +78,7 @@
     <text x="620" y="312" text-anchor="middle" font-size="13" fill="#217a70" font-weight="600">module TXD to controller RxD  (3.3 V)</text>
     <path d="M176,460 H660" fill="none" stroke="#a66c12" stroke-width="2.4" />
     <path d="M704,460 H754" fill="none" stroke="#a66c12" stroke-width="2.4" marker-end="url(#arrTx)" />
-    <text x="440" y="452" text-anchor="middle" font-size="13" fill="#a66c12" font-weight="600">controller TxD to module RXD  (3.3 V)</text>
+    <text x="440" y="452" text-anchor="middle" font-size="13" fill="#a66c12" font-weight="600">controller TxD (~4.6 V) to module RXD, via divider</text>
 
     <!-- ===== TxD -> RXD divider: 1kOhm series + 2kOhm pull-down (from reader issue #1, optional) ===== -->
     <rect x="660" y="454" width="44" height="12" fill="#ffffff" stroke="#a66c12" stroke-width="1.6" />
@@ -110,13 +110,13 @@
     <!-- ===== Notes ===== -->
     <g font-size="13.5">
       <text x="40" y="580" font-weight="700">Not needed any more:</text>
-      <text x="200" y="580">level converter (both sides are 3.3 V logic), separate 3.3 V regulator (the module has its own).</text>
+      <text x="200" y="580">4-channel level converter (a simple 2-resistor divider covers the one line that needs it), separate 3.3 V regulator (the module has its own).</text>
       <text x="40" y="603" font-weight="700">Ground path:</text>
       <text x="200" y="603">HIGO GND goes to IN-, OUT- goes to the module GND (no direct GND to GND wire). The DC-DC joins IN- and OUT- inside.</text>
       <text x="40" y="626" font-weight="700">Note:</text>
       <text x="200" y="626">the switch replaces the V2 permanent P+/PL short - OFF fully powers down the controller and the BT module together.</text>
-      <text x="40" y="644" font-weight="700">Divider (optional):</text>
-      <text x="200" y="644">1kΩ + 2kΩ on TxD -&gt; RXD, from a reader's working build (GitHub issue #1) - not yet confirmed by a multimeter measurement here.</text>
+      <text x="40" y="644" font-weight="700">Divider (recommended):</text>
+      <text x="200" y="644">1kΩ + 2kΩ on TxD -&gt; RXD - controller TxD measured at ~4.6V on a reader's Bafang (GitHub issue #1), not just a precaution.</text>
     </g>
   </g>
 </svg>

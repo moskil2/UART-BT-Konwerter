@@ -44,9 +44,9 @@ physical plug with a multimeter (with the battery connected, the pin at ~30-60V 
 
 ## Wiring diagram
 
-Wiring V3 (adds an ON/OFF switch on P+/PL, optional TxD divider - current preferred variant):
+Wiring V3 (adds an ON/OFF switch on P+/PL, recommended TxD divider - current preferred variant):
 
-<img src="diagram_v3.svg" alt="Wiring V3: HIGO 5-pin, ON/OFF switch between P+ and PL, DC-DC step-down IN+ tapped on the PL side of the switch, optional 1k/2k divider on TxD to module RXD" width="100%">
+<img src="diagram_v3.svg" alt="Wiring V3: HIGO 5-pin, ON/OFF switch between P+ and PL, DC-DC step-down IN+ tapped on the PL side of the switch, recommended 1k/2k divider on TxD to module RXD" width="100%">
 
 ```
 P+ (pin1, 30-60V)  -> ON/OFF switch -> PL (pin2)
@@ -55,14 +55,19 @@ GND (pin4)          -> step-down IN-
 step-down OUT-       -> BT module GND (IN- and OUT- are connected inside the converter -
                         no separate GND to GND wire)
 step-down OUT+ (+5V) -> BT module VCC (HM-10 or HC-06/BT-06 - same wiring for both)
-TxD (pin5)          -> [optional 1kΩ series] -> BT module RXD (3.3 V; see divider note below)
-                       [optional 2kΩ pull-down to GND on the RXD side]
+TxD (pin5, ~4.6V)   -> [1kΩ series] -> BT module RXD (~3.1V after the divider; see note below)
+                       [2kΩ pull-down to GND on the RXD side]
 RxD (pin3)          <- BT module TXD (directly, 3.3 V)
 ```
 
-Switch OFF fully powers down both the controller and the BT module together. The 1kΩ/2kΩ
-divider on TxD -> RXD comes from a reader's working build (GitHub issue #1, HC-06) - it is
-optional here and not yet confirmed by a multimeter measurement on this repo's own controller.
+Switch OFF fully powers down both the controller and the BT module together. The controller's
+RxD line (module TXD -> controller RxD) was confirmed at 3.3V from the original programming
+cable's wiring. Its TxD line is a separate signal and runs on the controller's own 5V logic rail -
+a reader measured it directly with a multimeter at ~4.6V on his Bafang (GitHub issue #1), so the
+1kΩ/2kΩ divider on TxD -> RXD is now **recommended**, not just optional, scaling it down to a
+safe ~3.1V for the BT module's RXD input. That measurement is from his own controller, not this
+repo's - still worth re-checking with a multimeter on any other unit before soldering, since
+exact levels can vary a little between controller revisions.
 
 Previous variant (no ON/OFF switch, superseded by V3 above):
 
@@ -143,9 +148,11 @@ soldered together, separately - this is the mechanism that wakes the controller 
 ## To confirm before soldering
 
 - HIGO pin numbering (controller side) - explained, see the section at the top, but still worth verifying with a multimeter (it comes only indirectly from a forum thread).
-- The controller UART logic level is now taken as settled at 3.3V (confirmed by the original
-  programming cable, which talks to the controller on 3.3V logic - see "Photos from
-  disassembling the original programming cable" below), so no level converter is planned.
+- The controller's RxD line is settled at 3.3V (confirmed by the original programming cable,
+  which talks to the controller on 3.3V logic - see "Photos from disassembling the original
+  programming cable" below). Its TxD line runs on the controller's own 5V logic rail - a reader
+  measured it directly at ~4.6V (GitHub issue #1) - which is why the V3 wiring includes a
+  1kΩ/2kΩ divider on that line, recommended rather than a full level converter.
 - Set the BT module to 1200 baud via AT commands (`AT+BAUD1` for HC-06/BT-06) before soldering -
   needs a 3.3V USB-UART adapter, module unpaired, no line ending.
 - Change the module's default pairing PIN (`AT+PIN`) - the default 1234/000000 would let anyone
