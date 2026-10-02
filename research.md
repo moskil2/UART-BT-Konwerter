@@ -58,36 +58,31 @@ Stary, bardziej rozbudowany schemat z MOSFET-em i konwerterem poziomów zostaje 
 V2 (`diagram_v2.svg`, stałe zwarcie bez przełącznika) - domyślny jest teraz schemat V3
 (`diagram_v3.svg`).
 
-## Numeracja pinów HIGO - wyjaśnione 09.09.2026
+## Numeracja pinów HIGO - poprawiona 02.10.2026
 
-Mieliśmy chwilowo zapisane jako "konflikt" dwa źródła numeracji pinów, które pozornie się nie
-zgadzały:
+Złącze HIGO 5-pin, strona kontrolera (ta, do której się podłączamy):
 
-| Pin | Rozbiórka kabla programującego / strona KONTROLERA (`KabelUSB_1/2.jpeg`, `Wtyczka_HIGO5.png`) | `Higo5.PNG` - strona WYŚWIETLACZA |
-|---|---|---|
-| 1 | P+ | GND |
-| 2 | PL | TxD |
-| 3 | RxD | P+ (36V, 48V, 52V) |
-| 4 | GND | RxD |
-| 5 | TxD | PL ("Power Lock") |
+| Pin | Funkcja |
+|---|---|
+| 1 | GND |
+| 2 | TxD |
+| 3 | P+ (30-60V) |
+| 4 | RxD |
+| 5 | PL ("Power Lock") |
 
-**To nie jest sprzeczność.** `Wtyczka_HIGO5.png` i `Higo5.PNG` to zdjęcia DWÓCH RÓŻNYCH,
-parujących się połówek tego samego złącza - jedna od strony kontrolera, druga od strony
-wyświetlacza. Kontroler i wyświetlacz to dwie płcie tej samej wtyczki, patrzące na siebie
-"twarzą w twarz" przy łączeniu - stąd naturalnie odwrócona numeracja pozycji między nimi,
-dokładnie tak jak przy patrzeniu na dowolne złącze od strony styków vs od strony przeciwnej.
+Potwierdzone przez dokumentację Krzysztofa i schemat referencyjny "Female Bafang variant"
+(patrz `Schemat_Hybrydowy_V3.PNG`, GitHub issue #1). **Wcześniejsza wersja tego pliku miała
+błędną numerację** (1=P+, 2=PL, 3=RxD, 4=GND, 5=TxD) - pochodziła tylko pośrednio z wątku na
+forum i nigdy nie była zweryfikowana. Poprawiono we wszystkich plikach repo (README.md,
+diagram_v2.svg, diagram_v3.svg) - `diagram.svg` (najstarszy wariant, z MOSFET-em) zostaje ze
+starą numeracją jako historia projektu, nie jest już aktualizowany.
 
-**Do naszego mostka BT liczy się WYŁĄCZNIE strona kontrolera** (bo to w to złącze się
-podłączamy, zastępując wyświetlacz) - `Higo5.PNG` pokazuje inne, niepowiązane bezpośrednio
-złącze i zostaje w tym katalogu tylko jako materiał poglądowy, nie jako konkurencyjne źródło
-numeracji.
+`Wtyczka_HIGO5.png` i `Higo5.PNG` to zdjęcia dwóch różnych, parujących się połówek tego samego
+złącza (kontroler i wyświetlacz) - ich drukowane numery pozycji wyglądają na lustrzane
+odbicie względem siebie przy samym oglądaniu zdjęć, co było źródłem wcześniejszej pomyłki.
 
-**Wciąż otwarte, mimo wyjaśnienia:** numeracja strony kontrolera (1=P+, 2=PL, 3=RxD, 4=GND,
-5=TxD) pochodzi tylko pośrednio z wątku na forum, nigdy nie zweryfikowana bezpośrednio na
-złączu ani oficjalnym schematem producenta. **Nadal warto zmierzyć multimetrem napięcie na
-każdym pinie fizycznej wtyczki (przy podłączonej baterii, pin z ~30-60V to P+) przed
-lutowaniem na stałe** - dla pewności, że to pośrednie źródło się nie myli, niezależnie od
-sprawy z `Higo5.PNG`.
+**Nadal warto zmierzyć multimetrem napięcie na każdym pinie fizycznej wtyczki (przy
+podłączonej baterii, pin z ~30-60V to P+) przed lutowaniem na stałe.**
 
 - W oryginalnym kablu (fabrycznym) **P+ i PL są zwarte ze sobą kawałkiem drutu** - to jedyny
   sposób na wybudzenie kontrolera bez podłączonego prawdziwego wyświetlacza (brak jakiejkolwiek
@@ -178,15 +173,15 @@ przełącznika [`diagram_v2.svg`](diagram_v2.svg), i bardziej rozbudowana, z kon
 MOSFET-em, w [`diagram.svg`](diagram.svg) i [`bt-bridge-wiring.html`](bt-bridge-wiring.html).
 
 ```
-P+ (pin1, 30-60V)  -> przełącznik ON/OFF -> PL (pin2)
+P+ (pin3, 30-60V)  -> przełącznik ON/OFF -> PL (pin5)
                                           -> przetwornica IN+ (odczep po stronie PL, za przełącznikiem)
-GND (pin4)          -> przetwornica IN-
+GND (pin1)          -> przetwornica IN-
 przetwornica OUT-   -> GND modułu BT (IN- i OUT- połączone wewnątrz przetwornicy - nie ma
                         osobnego przewodu GND-GND)
 przetwornica OUT+ (+5V) -> VCC modułu BT (HM-10 lub HC-06/BT-06 - ten sam schemat dla obu)
-TxD (pin5, ~4,6V)   -> [1kΩ szeregowo] -> RXD modułu BT (~3,1V po dzielniku)
+TxD (pin2, ~4,6V)   -> [1kΩ szeregowo] -> RXD modułu BT (~3,1V po dzielniku)
                        [2kΩ podciągające do masy, po stronie RXD]
-RxD (pin3)          <- TXD modułu BT (bezpośrednio, 3,3V)
+RxD (pin4)          <- TXD modułu BT (bezpośrednio, 3,3V)
 ```
 
 Dzielnik 1kΩ/2kΩ na linii TxD→RXD pochodzi ze zgłoszenia GitHub issue #1 (działający układ na
@@ -220,10 +215,12 @@ wymaga diod (w odróżnieniu od rozwiązania z tego zgłoszenia) - nie ma tu dru
 | Plik | Co to jest |
 |---|---|
 | `diagram_v3.svg` | Aktualny schemat - przełącznik ON/OFF na P+/PL, zalecany dzielnik na TxD→RXD |
+| `Schemat_Hybrydowy_V3.PNG` | Schemat hybrydowy V3, na zdjęciach realnych komponentów (HC-06, przetwornica, przełącznik, złącze) |
+| `HC-06.PNG` | Zdjęcie modułu HC-06 (DSD TECH) z pinoutem VCC/GND/TXD/RXD |
 | `diagram_v2.svg` | Poprzedni, uproszczony schemat (bez przełącznika, P+/PL zwarte na stałe) |
 | `bt-bridge-wiring.html` | Poprzedni, pełny interaktywny schemat (z konwerterem i MOSFET-em, scalony 09.09.2026) |
 | `HM-10.png` | Zdjęcie modułu HM-10 (piny: RXD/TXD/GND/VCC) |
-| `KabelUSB_1.jpeg`, `KabelUSB_2.jpeg` | Zdjęcia z rozbiórki oryginalnego kabla programującego - potwierdzenie zwarcia P+/PL, numeracji pinów HIGO i poziomu logiki 3,3V |
+| `KabelUSB_1.jpeg`, `KabelUSB_2.jpeg` | Zdjęcia z rozbiórki oryginalnego kabla programującego - potwierdzenie zwarcia P+/PL i poziomu logiki 3,3V na linii RX. Numeracja pinów z tych zdjęć sama w sobie była błędna (patrz sekcja o numeracji wyżej) |
 | `Konwerter.png` | Zdjęcie 4-kanałowego konwertera poziomów logicznych (BSS138) - element poprzedniej wersji, już niepotrzebny |
 | `DC-DC_StepDown_DC5-60V_5V.PNG` | Zdjęcie wybranej przetwornicy 5-60V→5V o stałym wyjściu (nadal używana) |
 | `Przetwornica.png` | Zdjęcie XL7015 - **odrzucony kandydat**, zostawione na dysku jako archiwum, usunięte z dokumentacji/schematu |

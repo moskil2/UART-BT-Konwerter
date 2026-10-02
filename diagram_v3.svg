@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 665" role="img" aria-label="Wiring diagram V3. Left: numbered HIGO 5-pin connector of the Bafang controller (1 P+, 2 PL, 3 RxD, 4 GND, 5 TxD). An ON/OFF switch sits between P+ and PL, replacing the permanent short of V2. The DC-DC step-down converter's IN+ pin is tapped from the switch's PL side, below the switch symbol, not directly from P+, so turning the switch off removes power from PL (the controller wake signal) and from the converter (and therefore the Bluetooth module) at the same time. A recommended 1k ohm series resistor plus a 2k ohm pull-down to ground form a voltage divider on the controller TxD to module RXD line, because the controller's TxD runs on its own 5V logic rail (measured at about 4.6 volts on a reader's Bafang controller, GitHub issue #1) and the divider brings that down to a safe level for the module's RXD input. When on, the converter's 5V output powers the VCC pin of the Bluetooth module (HM-10, HC-06 or BT-06). Controller GND goes to the converter IN- pin and the converter OUT- pin goes to the module GND, with no direct GND to GND wire, because IN- and OUT- are connected inside the non-isolated converter. The module TXD goes to the controller RxD directly, because that line is confirmed at 3.3V logic from the original programming cable. No level converter, no MOSFET, no 3.3V regulator.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 665" role="img" aria-label="Wiring diagram V3. Left: numbered HIGO 5-pin connector of the Bafang controller (1 GND, 2 TxD, 3 P+, 4 RxD, 5 PL). An ON/OFF switch sits between P+ and PL, replacing the permanent short of V2. The DC-DC step-down converter's IN+ pin is tapped from the switch's PL side, below the switch symbol, not directly from P+, so turning the switch off removes power from PL (the controller wake signal) and from the converter (and therefore the Bluetooth module) at the same time. A recommended 1k ohm series resistor plus a 2k ohm pull-down to ground form a voltage divider on the controller TxD to module RXD line, because the controller's TxD runs on its own 5V logic rail (measured at about 4.6 volts on a reader's Bafang controller, GitHub issue #1) and the divider brings that down to a safe level for the module's RXD input. When on, the converter's 5V output powers the VCC pin of the Bluetooth module (HM-10, HC-06 or BT-06). Controller GND goes to the converter IN- pin and the converter OUT- pin goes to the module GND, with no direct GND to GND wire, because IN- and OUT- are connected inside the non-isolated converter. The module TXD goes to the controller RxD directly, because that line is confirmed at 3.3V logic from the original programming cable. No level converter, no MOSFET, no 3.3V regulator.">
   <rect x="0" y="0" width="1100" height="665" fill="#ffffff"/>
   <defs>
     <marker id="arrTx" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
@@ -18,15 +18,15 @@
     <text x="105" y="124" text-anchor="middle" font-size="16" font-weight="700" letter-spacing="0.03em">HIGO 5-PIN</text>
     <g font-size="15" font-family="ui-monospace, Consolas, monospace">
       <circle cx="170" cy="180" r="4.5" fill="#c0392b" />
-      <text x="158" y="185" text-anchor="end"><tspan font-weight="700">1</tspan>  P+</text>
+      <text x="158" y="185" text-anchor="end"><tspan font-weight="700">3</tspan>  P+</text>
       <circle cx="170" cy="250" r="4.5" fill="#c0392b" />
-      <text x="158" y="255" text-anchor="end"><tspan font-weight="700">2</tspan>  PL</text>
+      <text x="158" y="255" text-anchor="end"><tspan font-weight="700">5</tspan>  PL</text>
       <circle cx="170" cy="320" r="4.5" fill="#217a70" />
-      <text x="158" y="325" text-anchor="end"><tspan font-weight="700">3</tspan>  RxD</text>
+      <text x="158" y="325" text-anchor="end"><tspan font-weight="700">4</tspan>  RxD</text>
       <circle cx="170" cy="390" r="4.5" fill="#5f6b64" />
-      <text x="158" y="395" text-anchor="end"><tspan font-weight="700">4</tspan>  GND</text>
+      <text x="158" y="395" text-anchor="end"><tspan font-weight="700">1</tspan>  GND</text>
       <circle cx="170" cy="460" r="4.5" fill="#a66c12" />
-      <text x="158" y="465" text-anchor="end"><tspan font-weight="700">5</tspan>  TxD</text>
+      <text x="158" y="465" text-anchor="end"><tspan font-weight="700">2</tspan>  TxD</text>
     </g>
     <text x="105" y="545" text-anchor="middle" font-size="13" fill-opacity="0.65">controller side</text>
 

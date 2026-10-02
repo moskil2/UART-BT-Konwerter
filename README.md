@@ -23,24 +23,29 @@ This repo collects everything that is settled, confirmed and still open in this 
 full, detailed version of this documentation: [`research.md`](research.md) (in Polish). The full
 interactive schematic (with photos attached, clickable): [`bt-bridge-wiring.html`](bt-bridge-wiring.html).
 
-## HIGO pin numbering - explained 09.09.2026
+## HIGO pin numbering
 
-`Wtyczka_HIGO5.png` (controller side) and `Higo5.PNG` (display side) show different
-numbering - but that is not a contradiction, they are two different, mating halves of the same connector,
-facing each other "face to face" (hence the naturally reversed position numbering):
+The HIGO 5-pin connector, controller side (the one our bridge plugs into):
 
-| Pin | CONTROLLER side (what we connect to) | DISPLAY side (`Higo5.PNG`, reference only) |
-|---|---|---|
-| 1 | P+ | GND |
-| 2 | PL | TxD |
-| 3 | RxD | P+ (36V, 48V, 52V) |
-| 4 | GND | RxD |
-| 5 | TxD | PL ("Power Lock") |
+| Pin | Function |
+|---|---|
+| 1 | GND |
+| 2 | TxD |
+| 3 | P+ (30-60V) |
+| 4 | RxD |
+| 5 | PL ("Power Lock") |
 
-Only the controller side matters for our BT bridge (1=P+, 2=PL, 3=RxD, 4=GND, 5=TxD).
-This numbering comes only indirectly from a forum thread, not from the manufacturer's official schematic -
-**despite the explanation above, it is still worth measuring the voltage on each pin of the
-physical plug with a multimeter (with the battery connected, the pin at ~30-60V is P+) before soldering anything permanently.**
+Confirmed against the "Female Bafang variant" pinout chart and the reader's own documentation
+(see `Schemat_Hybrydowy_V3.PNG` and GitHub issue #1). An earlier version of this README used a
+different numbering (1=P+, 2=PL, 3=RxD, 4=GND, 5=TxD), sourced only indirectly from a forum
+thread - that was wrong and has been corrected everywhere in this repo.
+
+`Wtyczka_HIGO5.png` and `Higo5.PNG` show the two different, mating halves of the same connector
+(controller side vs. display side) - their printed position numbers look mirrored relative to
+each other when just eyeballing the photos, which is what caused the earlier confusion.
+
+**Still worth measuring the voltage on each pin of the physical plug with a multimeter (with the
+battery connected, the pin at ~30-60V is P+) before soldering anything permanently.**
 
 ## Wiring diagram
 
@@ -49,15 +54,15 @@ Wiring V3 (adds an ON/OFF switch on P+/PL, recommended TxD divider - current pre
 <img src="diagram_v3.svg" alt="Wiring V3: HIGO 5-pin, ON/OFF switch between P+ and PL, DC-DC step-down IN+ tapped on the PL side of the switch, recommended 1k/2k divider on TxD to module RXD" width="100%">
 
 ```
-P+ (pin1, 30-60V)  -> ON/OFF switch -> PL (pin2)
+P+ (pin3, 30-60V)  -> ON/OFF switch -> PL (pin5)
                                     -> step-down IN+ (tapped on the PL side of the switch)
-GND (pin4)          -> step-down IN-
+GND (pin1)          -> step-down IN-
 step-down OUT-       -> BT module GND (IN- and OUT- are connected inside the converter -
                         no separate GND to GND wire)
 step-down OUT+ (+5V) -> BT module VCC (HM-10 or HC-06/BT-06 - same wiring for both)
-TxD (pin5, ~4.6V)   -> [1kΩ series] -> BT module RXD (~3.1V after the divider; see note below)
+TxD (pin2, ~4.6V)   -> [1kΩ series] -> BT module RXD (~3.1V after the divider; see note below)
                        [2kΩ pull-down to GND on the RXD side]
-RxD (pin3)          <- BT module TXD (directly, 3.3 V)
+RxD (pin4)          <- BT module TXD (directly, 3.3 V)
 ```
 
 Switch OFF fully powers down both the controller and the BT module together. The controller's
@@ -69,19 +74,23 @@ safe ~3.1V for the BT module's RXD input. That measurement is from his own contr
 repo's - still worth re-checking with a multimeter on any other unit before soldering, since
 exact levels can vary a little between controller revisions.
 
+Hybrid diagram V3 (on photos of the real components):
+
+<img src="Schemat_Hybrydowy_V3.PNG" alt="Hybrid diagram V3 on photos of the real components: HC-06 module, DC-DC step-down converter, ON/OFF switch and the HIGO 5-pin connector with the TxD/RXD divider" width="100%">
+
 Previous variant (no ON/OFF switch, superseded by V3 above):
 
 <img src="diagram_v2.svg" alt="Simplified wiring V2: HIGO 5-pin, P+ and PL shorted, DC-DC step-down 5-60V to 5V, Bluetooth module with VCC GND TXD RXD connected directly" width="100%">
 
 ```
-P+ (pin1, 30-60V)  -> shorted to PL (pin2), like in the original OTG cable
-P+ (pin1)          -> step-down IN+
-GND (pin4)          -> step-down IN-
+P+ (pin3, 30-60V)  -> shorted to PL (pin5), like in the original OTG cable
+P+ (pin3)          -> step-down IN+
+GND (pin1)          -> step-down IN-
 step-down OUT-       -> BT module GND (IN- and OUT- are connected inside the converter -
                         no separate GND to GND wire)
 step-down OUT+ (+5V) -> BT module VCC (HM-10 or HC-06/BT-06 - same wiring for both)
-TxD (pin5)          -> BT module RXD (directly, 3.3 V)
-RxD (pin3)          <- BT module TXD (directly, 3.3 V)
+TxD (pin2)          -> BT module RXD (directly, 3.3 V)
+RxD (pin4)          <- BT module TXD (directly, 3.3 V)
 ```
 
 Previous, more complex version (level shifter, MOSFET-controlled P+/PL switch) - superseded by V2 above, kept here as project history:
@@ -109,7 +118,7 @@ BSS123 Gate         -> R ~10kΩ -> PL (pull-down, OFF by default - the only resi
 | Component | Photo | Description |
 |---|---|---|
 | **HM-10** | ![HM-10](HM-10.png) | BLE module, CC2541F256 chip. Pins: RXD, TXD, GND, VCC (3.6-6V), PIO (not used for now - see the wiring diagram above). This unit does not expose an internal 3.3V, but that no longer matters since it is powered directly from the 5V step-down converter. |
-| **HC-06 (ZS-040 type)** | ![HC-06](HC-06.PNG) | Bluetooth Classic (SPP) module, e.g. the Botland ZS-040 offer. Supply 3.6-6V (own onboard regulator), 3.3V communication logic. Default 9600 baud, PIN 1234. AT commands: `AT`, `AT+BAUDx` (1=1200 ... 8=115200), `AT+NAME`, `AT+PIN`, parity - no GPIO/PIO command. |
+| **HC-06 (DSD TECH)** | ![HC-06](HC-06.PNG) | Bluetooth Classic (SPP) module, e.g. DSD TECH's HC-06. Supply 3.6-6V (own onboard regulator), 3.3V communication logic. Default 9600 baud, PIN 1234. AT commands: `AT`, `AT+BAUDx` (1=1200 ... 8=115200), `AT+NAME`, `AT+PIN`, parity - no GPIO/PIO command. |
 | **BT-06 (DSD TECH)** | (no photo in this repo) | Same family as HC-06 (BC417 chip), 4 pins only (VCC, GND, TXD, RXD, no LED/KEY), 3.6-6V, "TTL level 3.3V", default 9600 baud, PIN 1234. Harder to find locally than a plain HC-06 - see "To do" below. |
 | **Step-down converter P+ → 5V** | ![Step-down converter](DC-DC_StepDown_DC5-60V_5V.PNG) | 5-60V → 5V module, fixed output, 4 pins IN+/IN-/OUT+/OUT-, input capacitor rated 63V. The one and only converter chosen for the project (the earlier XL7015 candidate was rejected). IN- and OUT- are connected inside the module (non-isolated type) - to be verified with a continuity check before building. |
 | **HIGO 5-pin connector** | ![HIGO5](Wtyczka_HIGO5.png) | The controller's programming connector. |
@@ -190,3 +199,4 @@ soldered together, separately - this is the mechanism that wakes the controller 
 | `diagram_v2.svg` | Simplified wiring V2 (3.3 V logic, no level converter, no MOSFET, no switch) |
 | `diagram_v3.svg` | Wiring V3 - adds an ON/OFF switch on P+/PL and an optional TxD divider (current preferred variant) |
 | `HC-06.PNG` | Photo of the HC-06 module with pinout (VCC, GND, TXD, RXD) |
+| `Schemat_Hybrydowy_V3.PNG` | Hybrid diagram V3, on photos of the real components (HC-06, step-down converter, switch, connector) |
