@@ -34,7 +34,7 @@ bike's battery through the controller connector, and needs no battery or chargin
 |---|---|---|
 | **DSD TECH BT-06** Bluetooth module | <img src="docs/img/parts/bt06-module.jpeg" alt="BT-06 module" height="110"> | Bluetooth Classic (SPP), 3.6-6V supply, 3.3V logic. Uses 4 pads: VCC, GND, TXD, RXD. A generic **HC-06** works the same way. |
 | **Step-down converter** 5-60V in, 5V out | <img src="docs/img/parts/step-down.jpeg" alt="Step-down converter" height="110"> | Fixed 5V output, 4 pads IN+/IN-/OUT+/OUT-, input rated for at least the full battery voltage. Non-isolated type (IN- and OUT- connected inside - check with a multimeter). |
-| **Cable with a HIGO 5-pin plug** | <img src="docs/img/parts/cable-higo-plug.jpeg" alt="Cable with a HIGO 5-pin plug" height="110"> | Must mate with the controller-side connector (the one the display or the programming cable plugs into). |
+| **Cable with a HIGO 5-pin plug** | <img src="docs/img/parts/cable-higo-plug.jpeg" alt="Cable with a HIGO 5-pin plug" height="110"> <img src="docs/img/parts/higo-plug.png" alt="HIGO 5-pin plug with the green insert" height="110"> | Must mate with the controller-side connector (the one the display or the programming cable plugs into). |
 | **Resistors** | <img src="docs/img/parts/resistors.jpeg" alt="Two resistors" height="110"> | For the TxD divider - see [The divider](#the-divider) below. |
 | Thin wire, heat-shrink tubing, Kapton tape | | |
 
@@ -48,7 +48,7 @@ PC and 4 jumper wires.
 | Pin | Function | Notes |
 |---|---|---|
 | 1 | GND | |
-| 2 | TxD | controller transmits, ~4.6V logic |
+| 2 | TxD | controller transmits, 5V logic |
 | 3 | P+ | **battery voltage (30-60V), live even when the controller is off** |
 | 4 | RxD | controller receives, 3.3V logic is enough |
 | 5 | PL | "Power Lock" - connecting it to P+ wakes the controller |
@@ -75,28 +75,29 @@ RxD (pin 4)           <- BT-06 TXD (directly)
 The same circuit drawn on photos of the real parts - this drawing also shows the optional
 switch (see below):
 
-<img src="Schemat_Hybrydowy_V3.PNG" alt="Wiring drawn on photos of the real parts, with the optional ON/OFF switch between P+ and PL" width="100%">
+<img src="Schemat_Hybrydowy_V3.PNG" alt="Wiring drawn on photos of the real parts, with the optional ON/OFF switch in the P+ line" width="100%">
 
 **Optional switch.** If you want to turn the controller off by hand without unplugging the
-converter, put a small ON/OFF switch between P+ and PL, and take the step-down IN+ from the PL
-side of the switch - then the switch turns off both the controller and the module. It is not
-needed for the converter to work.
+converter, put a small ON/OFF switch in the P+ line - between HIGO pin 3 and the point where P+,
+PL and the step-down IN+ meet. Switched off, it turns off both the controller and the module. It
+is not needed for the converter to work.
 
 ### The divider
 
-The controller's TxD idles at about 4.6V, while the BT-06 RXD input is a 3.3V input (it accepts
-at most about 3.7V and needs at least about 2.3V to see a logic "1"). The two resistors R1/R2
-scale the signal down.
+The controller's TxD is a 5V logic output, while the BT-06 RXD input is a 3.3V input (it accepts
+at most about 3.7V and needs at least about 2.3V to see a logic "1"). The two resistors scale the
+signal down:
 
-- **R1 = 1kΩ, R2 = 2kΩ** - the divider shown in the diagrams, the usual choice for a 3.3V module
-  on a 5V signal.
-- **On my controller I used R1 = 10kΩ, R2 = 22kΩ.** With 1kΩ/2kΩ the RXD level on my unit would
-  only be about 2.3V - right at the module's threshold. With 10kΩ/22kΩ it idles at 2.95V and the
-  link works reliably.
+- **R1 = 10kΩ** in series, from HIGO pin 2 (TxD) to the BT-06 RXD;
+- **R2 = 22kΩ** from the BT-06 RXD to GND.
 
-Whichever you use, measure **BT-06 RXD against GND** with the converter plugged in and the
-controller idle: it should read about **2.5-3.3V**. Below that the module may not see the
-controller's replies; above 3.7V it is out of the module's spec.
+This is the divider the converter was tested with: the BT-06 RXD idles at **2.95V**, and the link
+works reliably. Do not use the 1kΩ/2kΩ divider often shown for HC-06 modules - see
+[Why 10kΩ/22kΩ and not 1kΩ/2kΩ](#why-10k22k-and-not-1k2k) at the bottom of this page.
+
+Measure **BT-06 RXD against GND** with the converter plugged in and the controller idle: it should
+read about **2.5-3.3V**. Below that the module may not see the controller's replies; above 3.7V
+it is out of the module's spec.
 
 ## Step 1: Program the BT-06
 
@@ -145,11 +146,6 @@ off with its own switch.
     module **TXD**;
   - measure the RXD level (see [The divider](#the-divider));
   - make sure the module was set to 1200 baud ([Manual 1](docs/01-program-bt06.md), step 7).
-- **Using a Windows PC:** after pairing, Windows creates Bluetooth COM ports; use the
-  **outgoing** one. The port numbers can change after each re-pairing. The old Bafang
-  Configuration Tool for OEM controllers does not work over Bluetooth (it stops with "File handle
-  is not a comm handle") - the converter is made for EggSPEED on Android.
-
 ## Safety
 
 - **P+ is the full battery voltage** and is live even with the controller switched off. Insulate
@@ -172,3 +168,18 @@ off with its own switch.
 | `Wtyczka_HIGO5.png` | HIGO 5-pin connector |
 | `Higo5.PNG` | HIGO 5-pin plug (female), pin numbers and functions |
 | [`archive/`](archive/ARCHIVE.md) | Earlier design variants and research notes (project history) |
+
+## Why 10k/22k and not 1k/2k
+
+The first version of the converter used a 1kΩ/2kΩ divider - the values usually shown for
+connecting an HC-06 module to a 5V Arduino. On the Bafang controller it left almost no margin:
+
+- the controller's TxD (HIGO pin 2) is not a strong output - loaded by 1kΩ + 2kΩ, it dropped to
+  **3.5V** (measured on pin 2);
+- the divider then gave about 3.5V × 2/3 ≈ **2.3V** on the BT-06 RXD - exactly the module's
+  minimum level for a logic "1", with no safety margin.
+
+A 10kΩ/22kΩ divider has about the same ratio, but loads the controller's TxD about ten times
+less, so the signal no longer sags. With it, the BT-06 RXD idles at **2.95V** (measured) and the
+controller's replies come through reliably. At 1200 baud the higher resistor values have no
+effect on the signal timing.

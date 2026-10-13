@@ -51,8 +51,9 @@ Do not pair it with a phone during the setup.
 Plug the cable into the PC and open **Device Manager** (right-click Start > Device Manager).
 Under **Ports (COM & LPT)** you should see **USB-SERIAL CH340 (COMx)**. Note the number.
 
-If the port does not show up, install the CH340 driver (`CH341SER.EXE`) from the chip
-manufacturer WCH (wch-ic.com) and plug the cable in again.
+If the port does not show up, install the CH340 driver
+([CH341SER.EXE](https://www.wch-ic.com/downloads/CH341SER_EXE.html)) from the chip manufacturer
+WCH and plug the cable in again.
 
 ![Device Manager with the CH340 port](img/01_device_manager_com4.png)
 
