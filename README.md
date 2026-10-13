@@ -14,7 +14,11 @@ This page is a step-by-step guide to building your own.
 
 ## How it works
 
-<a href="https://www.youtube.com/watch?v=2S8ZIboOqes"><img src="https://img.youtube.com/vi/2S8ZIboOqes/maxresdefault.jpg" width="480" alt="EggSPEED Bluetooth module for Bafang - video: connecting, pairing and programming over Bluetooth"></a>
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=2S8ZIboOqes"><img src="https://img.youtube.com/vi/2S8ZIboOqes/maxresdefault.jpg" width="480" alt="EggSPEED Bluetooth module for Bafang - video: connecting, pairing and programming over Bluetooth"></a>
+  <br>
+  <a href="https://www.youtube.com/watch?v=2S8ZIboOqes"><b>▶ Watch the video</b></a>
+</p>
 
 Normally EggSPEED talks to the controller through the USB OTG programming cable, with the phone
 plugged into the bike. The converter replaces that cable: it stays plugged into the controller,
