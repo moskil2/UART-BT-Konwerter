@@ -4,11 +4,6 @@ This manual shows how the converter was built, step by step. The step-down conve
 the back of the BT-06 module, so the whole thing ends up only a little bigger than the module
 itself.
 
-Program the BT-06 first ([Manual 1](01-program-bt06.md)) - after soldering, its pins are no
-longer reachable for the programming cable.
-
-[Back to the build guide](../README.md) - the wiring diagram and the HIGO pinout are there.
-
 ## Before you start: wire colors
 
 **Go by HIGO pin numbers, never by wire colors.** Cables with HIGO plugs use different wire
