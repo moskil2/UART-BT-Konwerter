@@ -14,11 +14,6 @@ This page is a step-by-step guide to building your own.
 
 ## How it works
 
-```
- Bafang controller                    converter                       phone
- HIGO 5-pin        P+ + PL ──── step-down 5V ──── BT-06                EggSPEED
- connector         TxD/RxD ──── (divider) ──────── BT-06 )))  Bluetooth
-```
 
 - The **BT-06** module is a Bluetooth "wireless serial cable": the phone sends bytes, the module
   passes them to the controller's UART at 1200 baud, and back.
@@ -35,7 +30,7 @@ plugged in). Unplug the converter when you are done.
 
 | Part | Notes |
 |---|---|
-| **DSD TECH BT-06** Bluetooth module | Bluetooth Classic (SPP), 3.6-6V supply, 3.3V logic. Uses 4 pads: VCC, GND, TXD, RXD. A generic **HC-06** works the same way. An **HM-10** does NOT work - it is Bluetooth Low Energy, which EggSPEED does not support. |
+| **DSD TECH BT-06** Bluetooth module | Bluetooth Classic (SPP), 3.6-6V supply, 3.3V logic. Uses 4 pads: VCC, GND, TXD, RXD. A generic **HC-06** works the same way. |
 | **Step-down converter** 5-60V in, 5V out | Fixed 5V output, 4 pads IN+/IN-/OUT+/OUT-, input rated for at least the full battery voltage. Non-isolated type (IN- and OUT- connected inside - check with a multimeter). |
 | **Cable with a HIGO 5-pin plug** | Must mate with the controller-side connector (the one the display or the programming cable plugs into). |
 | **Resistors** | For the TxD divider - see [The divider](#the-divider) below. |
