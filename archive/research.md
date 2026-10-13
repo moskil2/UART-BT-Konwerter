@@ -1,5 +1,9 @@
 # UART-BT Konwerter (moduł BT zamiast kabla OTG) - research
 
+> **Archiwum.** Notatki badawcze z etapu projektowania (stan z 02.10.2026, przed zbudowaniem i
+> przetestowaniem układu). Część informacji jest nieaktualna - aktualna instrukcja budowy jest w
+> [README.md](../README.md).
+
 Cel: sprzętowy mostek między UART-em kontrolera Bafang (złącze programujące HIGO 5-pin) a
 telefonem przez Bluetooth - appka EggSPEED łączy się bez kabla USB OTG.
 
@@ -23,15 +27,14 @@ przyjmujemy jako pewnik, bez dalszych zastrzeżeń. To potwierdza kierunek **mod
 żadnego dzielnika ani konwertera.
 
 Kierunek **kontroler → moduł** (TxD kontrolera, pin 5) to osobna linia, której kabel OTG sam w
-sobie nie rozstrzygał. Krzysztof (GitHub issue #1) zmierzył ją bezpośrednio multimetrem na swoim
-kontrolerze: **TxD trzyma ~4,6V** (logika Bafanga siedzi na wewnętrznej szynie 5V), zarówno w
+sobie nie rozstrzygał. Pomiar multimetrem bezpośrednio na kontrolerze BBSHD: **TxD trzyma ~4,6V** (logika Bafanga siedzi na wewnętrznej szynie 5V), zarówno w
 spoczynku, jak i na impulsach. Konsekwencja: na tej jednej linii zostaje prosty dzielnik
 rezystorowy 1kΩ/2kΩ (patrz "Aktualny schemat połączeń" niżej) - zbija ~4,6V do bezpiecznych
 ~3,1V dla wejścia RXD modułu. **Konwerter poziomów logicznych (4-kanałowy) i osobny regulator
 3,3V nadal są zbędne** - to inny, dużo prostszy problem niż to, co rozwiązywał tamten konwerter z
 poprzedniej wersji projektu, i dotyczy tylko jednej linii, nie całego interfejsu.
 
-Pomiar 4,6V pochodzi z kontrolera Krzysztofa, nie z naszego - różne rewizje sprzętu mogą się
+Pomiar 4,6V pochodzi z innego egzemplarza kontrolera - różne rewizje sprzętu mogą się
 nieznacznie różnić, więc własny pomiar multimetrem przed lutowaniem na stałe nadal ma sens.
 
 ## Status: przełącznik ON/OFF na P+/PL, bez konwertera poziomów (V3)
@@ -45,9 +48,8 @@ dokładnie jak w oryginalnym kablu OTG. Skutkiem było to, że kontroler jest w�
 czas, gdy mostek jest wpięty, a przetwornica pobiera niewielki prąd spoczynkowy z P+ nawet gdy
 rower stoi (P+ ma napięcie baterii niezależnie od tego, czy kontroler jest włączony).
 
-**Wersja V3 (aktualna) dodaje zwykły przełącznik ON/OFF na linii P+/PL** - inspirowane zgłoszeniem
-GitHub issue #1, ale bez jego rozbudowanej części (przełącznik 3-pozycyjny LCD/BT z diodami
-izolującymi - to rozwiązanie dla mieszanego układu LCD+BT, którego tu nie budujemy). Przetwornica
+**Wersja V3 (aktualna) dodaje zwykły przełącznik ON/OFF na linii P+/PL**, bez przełączania LCD/BT
+(to rozwiązanie dla mieszanego układu LCD+BT, którego tu nie budujemy). Przetwornica
 (IN+) jest podpięta **po stronie PL przełącznika**, nie bezpośrednio z P+, więc jeden przełącznik
 wyłącza jednocześnie kontroler (brak sygnału wybudzenia na PL) i moduł BT (brak zasilania
 przetwornicy). Diody nie są potrzebne - nie ma tu drugiego obwodu (np. wyświetlacza LCD)
@@ -70,8 +72,8 @@ Złącze HIGO 5-pin, strona kontrolera (ta, do której się podłączamy):
 | 4 | RxD |
 | 5 | PL ("Power Lock") |
 
-Potwierdzone przez dokumentację Krzysztofa i schemat referencyjny "Female Bafang variant"
-(patrz `Schemat_Hybrydowy_V3.PNG`, GitHub issue #1). **Wcześniejsza wersja tego pliku miała
+Potwierdzone schematem referencyjnym "Female Bafang variant"
+(patrz `Schemat_Hybrydowy_V3.PNG`). **Wcześniejsza wersja tego pliku miała
 błędną numerację** (1=P+, 2=PL, 3=RxD, 4=GND, 5=TxD) - pochodziła tylko pośrednio z wątku na
 forum i nigdy nie była zweryfikowana. Poprawiono we wszystkich plikach repo (README.md,
 diagram_v2.svg, diagram_v3.svg) - `diagram.svg` (najstarszy wariant, z MOSFET-em) zostaje ze
@@ -168,7 +170,7 @@ Dla naszego mostka istotna jest `AT+BAUD1` (1200 baud, docelowa prędkość kont
 
 ## Aktualny schemat połączeń (V3 - przełącznik ON/OFF, bez konwertera i bez MOSFET-a)
 
-Pełny diagram wektorowy: [`diagram_v3.svg`](diagram_v3.svg). Poprzednie wersje: uproszczona bez
+Pełny diagram wektorowy: [`diagram_v3.svg`](../diagram_v3.svg). Poprzednie wersje: uproszczona bez
 przełącznika [`diagram_v2.svg`](diagram_v2.svg), i bardziej rozbudowana, z konwerterem poziomów i
 MOSFET-em, w [`diagram.svg`](diagram.svg) i [`bt-bridge-wiring.html`](bt-bridge-wiring.html).
 
@@ -184,10 +186,9 @@ TxD (pin2, ~4,6V)   -> [1kΩ szeregowo] -> RXD modułu BT (~3,1V po dzielniku)
 RxD (pin4)          <- TXD modułu BT (bezpośrednio, 3,3V)
 ```
 
-Dzielnik 1kΩ/2kΩ na linii TxD→RXD pochodzi ze zgłoszenia GitHub issue #1 (działający układ na
-HC-06) i jest **zalecany** - Krzysztof zmierzył TxD kontrolera bezpośrednio na ~4,6V (patrz sekcja
-o poziomie logiki wyżej), to nie jest już tylko ostrożność "na wszelki wypadek". Przełącznik nie
-wymaga diod (w odróżnieniu od rozwiązania z tego zgłoszenia) - nie ma tu drugiego obwodu
+Dzielnik 1kΩ/2kΩ na linii TxD→RXD jest **zalecany** - TxD kontrolera zmierzono bezpośrednio na
+~4,6V (patrz sekcja o poziomie logiki wyżej), to nie jest już tylko ostrożność "na wszelki
+wypadek". Przełącznik nie wymaga diod - nie ma tu drugiego obwodu
 (np. LCD) dzielącego pin PL, z którym trzeba by się izolować.
 
 ## Do potwierdzenia / do zrobienia przed lutowaniem
@@ -206,7 +207,7 @@ wymaga diod (w odróżnieniu od rozwiązania z tego zgłoszenia) - nie ma tu dru
   `AT` -> `OK`, `AT+VERSION`, `AT+BAUD1` -> `OK1200`.
 - Fizyczne złożenie układu na płytce/prototypie i test na prawdziwym kontrolerze - **najpierw
   OEM, potem bbs-fw** (patrz "HC-06 kontra HM-10" wyżej).
-- Pomiar ~4,6V na TxD kontrolera pochodzi z innego egzemplarza (Krzysztof, issue #1) - warto
+- Pomiar ~4,6V na TxD kontrolera pochodzi z innego egzemplarza - warto
   potwierdzić multimetrem na własnym kontrolerze przed lutowaniem, mimo że dzielnik 1kΩ/2kΩ
   i tak daje spory margines bezpieczeństwa.
 

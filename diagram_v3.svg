@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 665" role="img" aria-label="Wiring diagram V3. Left: numbered HIGO 5-pin connector of the Bafang controller (1 GND, 2 TxD, 3 P+, 4 RxD, 5 PL). An ON/OFF switch sits between P+ and PL, replacing the permanent short of V2. The DC-DC step-down converter's IN+ pin is tapped from the switch's PL side, below the switch symbol, not directly from P+, so turning the switch off removes power from PL (the controller wake signal) and from the converter (and therefore the Bluetooth module) at the same time. A recommended 1k ohm series resistor plus a 2k ohm pull-down to ground form a voltage divider on the controller TxD to module RXD line, because the controller's TxD runs on its own 5V logic rail (measured at about 4.6 volts on a reader's Bafang controller, GitHub issue #1) and the divider brings that down to a safe level for the module's RXD input. When on, the converter's 5V output powers the VCC pin of the Bluetooth module (HM-10, HC-06 or BT-06). Controller GND goes to the converter IN- pin and the converter OUT- pin goes to the module GND, with no direct GND to GND wire, because IN- and OUT- are connected inside the non-isolated converter. The module TXD goes to the controller RxD directly, because that line is confirmed at 3.3V logic from the original programming cable. No level converter, no MOSFET, no 3.3V regulator.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 665" role="img" aria-label="Wiring diagram. Left: numbered HIGO 5-pin connector of the Bafang controller (1 GND, 2 TxD, 3 P+, 4 RxD, 5 PL). P+ and PL are soldered together, which wakes the controller like in the original programming cable, and both go to the DC-DC step-down converter's IN+ pin. An optional switch between P+ and PL can be added to turn the controller off by hand. A recommended 1k ohm series resistor plus a 2k ohm pull-down to ground form a voltage divider on the controller TxD to module RXD line, because the controller's TxD runs on its own 5V logic rail (about 4.6 volts) and the divider brings that down to a safe level for the module's RXD input. The converter's 5V output powers the VCC pin of the Bluetooth module (BT-06 or HC-06). Controller GND goes to the converter IN- pin and the converter OUT- pin goes to the module GND, with no direct GND to GND wire, because IN- and OUT- are connected inside the non-isolated converter. The module TXD goes to the controller RxD directly, because that line is confirmed at 3.3V logic from the original programming cable.">
   <rect x="0" y="0" width="1100" height="665" fill="#ffffff"/>
   <defs>
     <marker id="arrTx" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
@@ -11,7 +11,7 @@
   <g font-family="Segoe UI, Arial, Helvetica, sans-serif" fill="#1b1f1c">
 
     <!-- ===== Title ===== -->
-    <text x="550" y="22" text-anchor="middle" font-size="19" font-weight="700">UART-BT bridge - wiring V3 (switchable P+/PL, TxD divider)</text>
+    <text x="550" y="22" text-anchor="middle" font-size="19" font-weight="700">UART-BT converter - wiring (P+/PL shorted, TxD divider)</text>
 
     <!-- ===== HIGO 5-pin connector (controller side) ===== -->
     <rect x="40" y="140" width="130" height="380" rx="10" fill="none" stroke="#1b1f1c" stroke-width="1.6" />
@@ -30,21 +30,16 @@
     </g>
     <text x="105" y="545" text-anchor="middle" font-size="13" fill-opacity="0.65">controller side</text>
 
-    <!-- ===== P+ -> switch -> PL, IN+ tapped from the PL side (below the switch) ===== -->
+    <!-- ===== P+ and PL soldered together, both to DC-DC IN+ ===== -->
     <text x="150" y="163" text-anchor="end" font-size="12" fill="#c0392b" font-weight="600">P+ (30-60 V)</text>
-    <path d="M170,180 H215 V190" fill="none" stroke="#c0392b" stroke-width="2.4" />
-    <circle cx="215" cy="190" r="3.5" fill="#c0392b" />
-    <path d="M215,190 L233,208" fill="none" stroke="#c0392b" stroke-width="2.2" />
-    <circle cx="215" cy="210" r="3.5" fill="#c0392b" />
-    <path d="M215,210 V235" fill="none" stroke="#c0392b" stroke-width="2.4" />
-    <circle cx="215" cy="235" r="4.5" fill="#c0392b" />
-    <path d="M215,235 V250 H170" fill="none" stroke="#c0392b" stroke-width="2.4" />
-    <text x="245" y="188" font-size="13" fill="#c0392b" font-weight="600">ON/OFF switch</text>
-    <text x="245" y="204" font-size="12" fill-opacity="0.65">OFF: no controller wake signal,</text>
-    <text x="245" y="218" font-size="12" fill-opacity="0.65">no power to the DC-DC / BT module</text>
+    <path d="M170,180 H215 V250 H170" fill="none" stroke="#c0392b" stroke-width="2.4" />
+    <circle cx="215" cy="180" r="4.5" fill="#c0392b" />
+    <text x="228" y="216" font-size="13" fill="#c0392b" font-weight="600">P+ and PL soldered together</text>
+    <text x="228" y="232" font-size="12" fill-opacity="0.65">wakes the controller,</text>
+    <text x="228" y="246" font-size="12" fill-opacity="0.65">like the original cable</text>
 
-    <!-- ===== switch (PL side) to DC-DC IN+ - clear of the switch symbol above ===== -->
-    <path d="M215,235 H270 V85 H330" fill="none" stroke="#c0392b" stroke-width="2.4" />
+    <!-- ===== P+/PL to DC-DC IN+ ===== -->
+    <path d="M215,180 H270 V85 H330" fill="none" stroke="#c0392b" stroke-width="2.4" />
 
     <!-- ===== DC-DC step-down ===== -->
     <rect x="330" y="55" width="200" height="95" rx="8" fill="none" stroke="#1b1f1c" stroke-width="1.6" />
@@ -80,7 +75,7 @@
     <path d="M704,460 H754" fill="none" stroke="#a66c12" stroke-width="2.4" marker-end="url(#arrTx)" />
     <text x="440" y="452" text-anchor="middle" font-size="13" fill="#a66c12" font-weight="600">controller TxD (~4.6 V) to module RXD, via divider</text>
 
-    <!-- ===== TxD -> RXD divider: 1kOhm series + 2kOhm pull-down (from reader issue #1, optional) ===== -->
+    <!-- ===== TxD -> RXD divider: 1kOhm series + 2kOhm pull-down ===== -->
     <rect x="660" y="454" width="44" height="12" fill="#ffffff" stroke="#a66c12" stroke-width="1.6" />
     <text x="682" y="446" text-anchor="middle" font-size="12" fill="#a66c12" font-weight="600">1kΩ</text>
     <circle cx="735" cy="460" r="4" fill="#a66c12" />
@@ -93,8 +88,8 @@
     <!-- ===== BT module ===== -->
     <rect x="760" y="250" width="220" height="250" rx="10" fill="none" stroke="#1b1f1c" stroke-width="1.6" />
     <text x="870" y="234" text-anchor="middle" font-size="16" font-weight="700" letter-spacing="0.03em">BLUETOOTH MODULE</text>
-    <text x="870" y="278" text-anchor="middle" font-size="14" font-weight="600">HM-10 / HC-06 / BT-06</text>
-    <text x="870" y="426" text-anchor="middle" font-size="12" fill-opacity="0.65">the same 4 wires for all of them</text>
+    <text x="870" y="278" text-anchor="middle" font-size="14" font-weight="600">BT-06 / HC-06</text>
+    <text x="870" y="426" text-anchor="middle" font-size="12" fill-opacity="0.65">4 wires: VCC, GND, TXD, RXD</text>
     <g font-size="14.5" font-family="ui-monospace, Consolas, monospace">
       <circle cx="760" cy="290" r="4.5" fill="#c0392b" />
       <text x="774" y="295">VCC</text>
@@ -109,14 +104,14 @@
 
     <!-- ===== Notes ===== -->
     <g font-size="13.5">
-      <text x="40" y="580" font-weight="700">Not needed any more:</text>
-      <text x="200" y="580">4-channel level converter (a simple 2-resistor divider covers the one line that needs it), separate 3.3 V regulator (the module has its own).</text>
+      <text x="40" y="580" font-weight="700">Module:</text>
+      <text x="200" y="580">BT-06 or HC-06 (Bluetooth Classic SPP), set to 1200 baud before soldering. HM-10 (BLE) does not work with EggSPEED.</text>
       <text x="40" y="603" font-weight="700">Ground path:</text>
       <text x="200" y="603">HIGO GND goes to IN-, OUT- goes to the module GND (no direct GND to GND wire). The DC-DC joins IN- and OUT- inside.</text>
-      <text x="40" y="626" font-weight="700">Note:</text>
-      <text x="200" y="626">the switch replaces the V2 permanent P+/PL short - OFF fully powers down the controller and the BT module together.</text>
-      <text x="40" y="644" font-weight="700">Divider (recommended):</text>
-      <text x="200" y="644">1kΩ + 2kΩ on TxD -&gt; RXD - controller TxD measured at ~4.6V on a reader's Bafang (GitHub issue #1), not just a precaution.</text>
+      <text x="40" y="626" font-weight="700">Switch (optional):</text>
+      <text x="200" y="626">not needed. A switch between P+ and PL lets you turn the controller off by hand; without it, unplug the converter.</text>
+      <text x="40" y="644" font-weight="700">Divider:</text>
+      <text x="200" y="644">1kΩ + 2kΩ on TxD -&gt; RXD (controller TxD ~4.6 V). The author's build uses 10kΩ + 22kΩ - see README.</text>
     </g>
   </g>
 </svg>

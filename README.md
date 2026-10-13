@@ -1,202 +1,176 @@
 # UART-BT Converter
 
-A hardware bridge between the UART of a Bafang controller (HIGO 5-pin programming connector) and a
-phone over Bluetooth, so the [EggSPEED](https://github.com/moskil2/EggSPEED) app connects without a
-USB OTG cable.
+A small DIY Bluetooth converter for Bafang BBS mid-drive controllers. It plugs into the
+controller's HIGO 5-pin display/programming connector and replaces the USB OTG programming
+cable, so the [EggSPEED](https://github.com/moskil2/EggSPEED) Android app connects to the
+controller over Bluetooth - no cable between the phone and the bike.
 
-Two module types are being evaluated, and they are not interchangeable: each speaks a different
-Bluetooth protocol, with no shared "Bluetooth" layer underneath, so each needs its own, separate
-integration into EggSPEED.
+**Status: built and tested.** Works with EggSPEED v0.6.1 or newer over Bluetooth - reading,
+programming and the live Cockpit - on OEM Bafang firmware and on BBS-FW (tested on a BBSHD).
 
-**HC-06** is a classic Bluetooth (Bluetooth Classic, SPP profile) module. It pairs like a wireless
-serial cable: Windows and Android see it as a virtual serial port, and once paired it behaves
-exactly like the original OTG cable, forcing the controller permanently on for as long as the
-module is powered. It has no programmable output pin.
+<img src="docs/img/Lutowanie/8.jpeg" alt="The finished converter wrapped in Kapton tape, next to a 2 euro coin for size" width="480">
 
-**HM-10** is a Bluetooth Low Energy (BLE) module. Instead of a virtual serial port, an app talks to
-it through a GATT service/characteristic, in small packets, which is a different way of exchanging
-data on the Android side. Unlike HC-06, HM-10 has a programmable I/O pin (PIO), which makes it
-possible to build a remote, software-controlled switch for the controller, instead of forcing it
-permanently on.
+This page is a step-by-step guide to building your own.
 
-This repo collects everything that is settled, confirmed and still open in this project. The
-full, detailed version of this documentation: [`research.md`](research.md) (in Polish). The full
-interactive schematic (with photos attached, clickable): [`bt-bridge-wiring.html`](bt-bridge-wiring.html).
+## How it works
 
-## HIGO pin numbering
+```
+ Bafang controller                    converter                       phone
+ HIGO 5-pin        P+ + PL ──── step-down 5V ──── BT-06                EggSPEED
+ connector         TxD/RxD ──── (divider) ──────── BT-06 )))  Bluetooth
+```
 
-The HIGO 5-pin connector, controller side (the one our bridge plugs into):
+- The **BT-06** module is a Bluetooth "wireless serial cable": the phone sends bytes, the module
+  passes them to the controller's UART at 1200 baud, and back.
+- **P+ and PL are soldered together** - the same trick as in the original programming cable: it
+  wakes the controller without a display.
+- A **step-down converter** makes 5V for the module from the battery voltage on P+.
+- A **resistor divider** brings the controller's ~4.6V TxD signal down to a level that is safe for
+  the module's 3.3V input.
 
-| Pin | Function |
+While the converter is plugged in, the controller stays on (just like with the programming cable
+plugged in). Unplug the converter when you are done.
+
+## What you need
+
+| Part | Notes |
 |---|---|
-| 1 | GND |
-| 2 | TxD |
-| 3 | P+ (30-60V) |
-| 4 | RxD |
-| 5 | PL ("Power Lock") |
+| **DSD TECH BT-06** Bluetooth module | Bluetooth Classic (SPP), 3.6-6V supply, 3.3V logic. Uses 4 pads: VCC, GND, TXD, RXD. A generic **HC-06** works the same way. An **HM-10** does NOT work - it is Bluetooth Low Energy, which EggSPEED does not support. |
+| **Step-down converter** 5-60V in, 5V out | Fixed 5V output, 4 pads IN+/IN-/OUT+/OUT-, input rated for at least the full battery voltage. Non-isolated type (IN- and OUT- connected inside - check with a multimeter). |
+| **Cable with a HIGO 5-pin plug** | Must mate with the controller-side connector (the one the display or the programming cable plugs into). |
+| **Resistors** | For the TxD divider - see [The divider](#the-divider) below. |
+| Thin wire, heat-shrink tubing, Kapton tape | |
 
-Confirmed against the "Female Bafang variant" pinout chart and the reader's own documentation
-(see `Schemat_Hybrydowy_V3.PNG` and GitHub issue #1). An earlier version of this README used a
-different numbering (1=P+, 2=PL, 3=RxD, 4=GND, 5=TxD), sourced only indirectly from a forum
-thread - that was wrong and has been corrected everywhere in this repo.
+Tools: soldering iron, multimeter.
 
-`Wtyczka_HIGO5.png` and `Higo5.PNG` show the two different, mating halves of the same connector
-(controller side vs. display side) - their printed position numbers look mirrored relative to
-each other when just eyeballing the photos, which is what caused the earlier confusion.
+For programming the module once (Step 1): the Bafang USB programming cable (OTG cable), a Windows
+PC and 4 jumper wires.
 
-**Still worth measuring the voltage on each pin of the physical plug with a multimeter (with the
-battery connected, the pin at ~30-60V is P+) before soldering anything permanently.**
+<img src="docs/img/Lutowanie/0.jpeg" alt="Parts: cable with a HIGO 5-pin plug, two resistors, step-down converter, Bluetooth module" width="480">
+
+## HIGO pinout (controller side)
+
+| Pin | Function | Notes |
+|---|---|---|
+| 1 | GND | |
+| 2 | TxD | controller transmits, ~4.6V logic |
+| 3 | P+ | **battery voltage (30-60V), live even when the controller is off** |
+| 4 | RxD | controller receives, 3.3V logic is enough |
+| 5 | PL | "Power Lock" - connecting it to P+ wakes the controller |
+
+**Go by pin numbers, never by wire colors.** Cables with HIGO plugs use different wire colors -
+on some, even GND is red. Check every wire against the pin number with a multimeter (continuity)
+before soldering.
 
 ## Wiring diagram
 
-Wiring V3 (adds an ON/OFF switch on P+/PL, recommended TxD divider - current preferred variant):
-
-<img src="diagram_v3.svg" alt="Wiring V3: HIGO 5-pin, ON/OFF switch between P+ and PL, DC-DC step-down IN+ tapped on the PL side of the switch, recommended 1k/2k divider on TxD to module RXD" width="100%">
+<img src="diagram_v3.svg" alt="Wiring: HIGO 5-pin, P+ and PL soldered together to the step-down converter IN+, divider on TxD to module RXD" width="100%">
 
 ```
-P+ (pin3, 30-60V)  -> ON/OFF switch -> PL (pin5)
-                                    -> step-down IN+ (tapped on the PL side of the switch)
-GND (pin1)          -> step-down IN-
-step-down OUT-       -> BT module GND (IN- and OUT- are connected inside the converter -
-                        no separate GND to GND wire)
-step-down OUT+ (+5V) -> BT module VCC (HM-10 or HC-06/BT-06 - same wiring for both)
-TxD (pin2, ~4.6V)   -> [1kΩ series] -> BT module RXD (~3.1V after the divider; see note below)
-                       [2kΩ pull-down to GND on the RXD side]
-RxD (pin4)          <- BT module TXD (directly, 3.3 V)
+P+  (pin 3) ─┬─ PL (pin 5)          (soldered together)
+             └─ step-down IN+
+GND (pin 1)           -> step-down IN-
+step-down OUT+ (5V)   -> BT-06 VCC
+step-down OUT-        -> BT-06 GND
+TxD (pin 2)           -> R1 (series) -> BT-06 RXD
+                         R2 from BT-06 RXD to GND
+RxD (pin 4)           <- BT-06 TXD (directly)
 ```
 
-Switch OFF fully powers down both the controller and the BT module together. The controller's
-RxD line (module TXD -> controller RxD) was confirmed at 3.3V from the original programming
-cable's wiring. Its TxD line is a separate signal and runs on the controller's own 5V logic rail -
-a reader measured it directly with a multimeter at ~4.6V on his Bafang (GitHub issue #1), so the
-1kΩ/2kΩ divider on TxD -> RXD is now **recommended**, not just optional, scaling it down to a
-safe ~3.1V for the BT module's RXD input. That measurement is from his own controller, not this
-repo's - still worth re-checking with a multimeter on any other unit before soldering, since
-exact levels can vary a little between controller revisions.
+The same circuit drawn on photos of the real parts - this drawing also shows the optional
+switch (see below):
 
-Hybrid diagram V3 (on photos of the real components):
+<img src="Schemat_Hybrydowy_V3.PNG" alt="Wiring drawn on photos of the real parts, with the optional ON/OFF switch between P+ and PL" width="100%">
 
-<img src="Schemat_Hybrydowy_V3.PNG" alt="Hybrid diagram V3 on photos of the real components: HC-06 module, DC-DC step-down converter, ON/OFF switch and the HIGO 5-pin connector with the TxD/RXD divider" width="100%">
+**Optional switch.** If you want to turn the controller off by hand without unplugging the
+converter, put a small ON/OFF switch between P+ and PL, and take the step-down IN+ from the PL
+side of the switch - then the switch turns off both the controller and the module. It is not
+needed for the converter to work.
 
-Previous variant (no ON/OFF switch, superseded by V3 above):
+### The divider
 
-<img src="diagram_v2.svg" alt="Simplified wiring V2: HIGO 5-pin, P+ and PL shorted, DC-DC step-down 5-60V to 5V, Bluetooth module with VCC GND TXD RXD connected directly" width="100%">
+The controller's TxD idles at about 4.6V, while the BT-06 RXD input is a 3.3V input (it accepts
+at most about 3.7V and needs at least about 2.3V to see a logic "1"). The two resistors R1/R2
+scale the signal down.
 
-```
-P+ (pin3, 30-60V)  -> shorted to PL (pin5), like in the original OTG cable
-P+ (pin3)          -> step-down IN+
-GND (pin1)          -> step-down IN-
-step-down OUT-       -> BT module GND (IN- and OUT- are connected inside the converter -
-                        no separate GND to GND wire)
-step-down OUT+ (+5V) -> BT module VCC (HM-10 or HC-06/BT-06 - same wiring for both)
-TxD (pin2)          -> BT module RXD (directly, 3.3 V)
-RxD (pin4)          <- BT module TXD (directly, 3.3 V)
-```
+- **R1 = 1kΩ, R2 = 2kΩ** - the divider shown in the diagrams, the usual choice for a 3.3V module
+  on a 5V signal.
+- **On my controller I used R1 = 10kΩ, R2 = 22kΩ.** With 1kΩ/2kΩ the RXD level on my unit would
+  only be about 2.3V - right at the module's threshold. With 10kΩ/22kΩ it idles at 2.95V and the
+  link works reliably.
 
-Previous, more complex version (level shifter, MOSFET-controlled P+/PL switch) - superseded by V2 above, kept here as project history:
+Whichever you use, measure **BT-06 RXD against GND** with the converter plugged in and the
+controller idle: it should read about **2.5-3.3V**. Below that the module may not see the
+controller's replies; above 3.7V it is out of the module's spec.
 
-<img src="diagram.svg" alt="Diagram: HIGO 5-pin -> BSS123 MOSFET -> step-down converter -> BSS138 level shifter -> HM-10" width="100%">
+## Step 1: Program the BT-06
 
-Alternative, hybrid diagram of the previous version (drawn on photos of the real boards):
+The module has to be set to 1200 baud (and given a name, and optionally a new PIN) before it can
+talk to the controller. This is done once, from a Windows PC, with the Bafang programming cable
+you already have.
 
-<img src="Schemat_hybrydowy.png" alt="Hybrid diagram - on photos of the real boards" width="100%">
+**[Manual 1 - Program the BT-06 with the OTG cable](docs/01-program-bt06.md)**
 
-```
-P+ (pin1, 30-60V)  -> step-down IN+                          -> BSS123 Drain
-step-down OUT+ (+5V) -> level shifter HVcc -> HM-10 module VCC (directly)
-                     -> 3.3V regulator VIN (e.g. AMS1117-3.3) -> level shifter LVcc
-GND (pin4)          -> common ground (both sides of the circuit, including step-down IN-/OUT-)
-TxD (pin5)          -> H3 -> L3 -> RXD (HM-10)
-RxD (pin3)          <- H4 <- L4 <- TXD (HM-10)
-PL (pin2)           <- BSS123 Source
-BSS123 Gate         <- PIO (HM-10), directly (no series resistor)
-BSS123 Gate         -> R ~10kΩ -> PL (pull-down, OFF by default - the only resistor in this path)
-```
+## Step 2: Build the converter
 
-## Components
+**[Manual 2 - Build and solder the converter](docs/02-build-and-solder.md)** - step by step,
+with photos.
 
-| Component | Photo | Description |
-|---|---|---|
-| **HM-10** | ![HM-10](HM-10.png) | BLE module, CC2541F256 chip. Pins: RXD, TXD, GND, VCC (3.6-6V), PIO (not used for now - see the wiring diagram above). This unit does not expose an internal 3.3V, but that no longer matters since it is powered directly from the 5V step-down converter. |
-| **HC-06 (DSD TECH)** | ![HC-06](HC-06.PNG) | Bluetooth Classic (SPP) module, e.g. DSD TECH's HC-06. Supply 3.6-6V (own onboard regulator), 3.3V communication logic. Default 9600 baud, PIN 1234. AT commands: `AT`, `AT+BAUDx` (1=1200 ... 8=115200), `AT+NAME`, `AT+PIN`, parity - no GPIO/PIO command. |
-| **BT-06 (DSD TECH)** | (no photo in this repo) | Same family as HC-06 (BC417 chip), 4 pins only (VCC, GND, TXD, RXD, no LED/KEY), 3.6-6V, "TTL level 3.3V", default 9600 baud, PIN 1234. Harder to find locally than a plain HC-06 - see "To do" below. |
-| **Step-down converter P+ → 5V** | ![Step-down converter](DC-DC_StepDown_DC5-60V_5V.PNG) | 5-60V → 5V module, fixed output, 4 pins IN+/IN-/OUT+/OUT-, input capacitor rated 63V. The one and only converter chosen for the project (the earlier XL7015 candidate was rejected). IN- and OUT- are connected inside the module (non-isolated type) - to be verified with a continuity check before building. |
-| **HIGO 5-pin connector** | ![HIGO5](Wtyczka_HIGO5.png) | The controller's programming connector. |
-| **HIGO5 reference photo (display side)** | ![Higo5 ref](Higo5.PNG) | A different connector, not directly related (the other gender of the plug) - reference only, see the explanation above. |
+In short:
 
-### Previous version: MOSFET-based remote switch (project history, not part of the current build)
+1. Check with a multimeter that the step-down converter's IN- and OUT- are connected.
+2. **Power:** HIGO pin 3 (P+) and pin 5 (PL) soldered together, to step-down IN+. HIGO pin 1
+   (GND) to step-down IN-.
+3. **Module power:** step-down OUT+ to BT-06 VCC, OUT- to BT-06 GND.
+4. **Controller to module:** HIGO pin 2 (TxD) through R1 to BT-06 RXD; R2 from BT-06 RXD to GND.
+5. **Module to controller:** BT-06 TXD directly to HIGO pin 4 (RxD).
+6. Insulate everything - P+ is battery voltage.
 
-| Component | Photo | Description |
-|---|---|---|
-| **Logic level shifter** | ![Level shifter](Konwerter.png) | 4-channel, BSS138-based. Two independent rails: HVcc (5V) and LVcc (3.3V, from a separate regulator, e.g. AMS1117-3.3). Not needed now that both sides are confirmed to use 3.3V logic. |
-| **BSS123 MOSFET** | ![BSS123](BSS_123.jpeg) | N-channel, logic-level, SOT-23, 100V/0.17A continuous. Was meant to replace the fixed wire bridge between P+ and PL with a remote switch - Drain→P+, Source→PL, Gate←PIO (HM-10), **directly, with no series resistor** (that is only an optional good practice, not a requirement - deliberately left out for simplicity). The only resistor in this path is the Gate→PL pull-down (~10kΩ), which keeps the MOSFET OFF by default during HM-10 startup/reset. Currently P+ and PL are simply shorted with a wire instead, like in the original OTG cable. |
-| **3.3V regulator** | ![Regulator](Stabilizator.PNG) | E.g. AMS1117-3.3, 12.3×8.6mm module, pins VIN/OUT/GND. Was needed to power the level shifter's LVcc. |
+## Step 3: Connect EggSPEED
 
-#### Why the BSS123 (100V/0.17A) was enough
+1. Plug the converter into the controller (battery connected). The controller wakes up and the
+   BT-06 LED starts blinking.
+2. On the phone: **Settings > Bluetooth**, pair **EggSPEED-BT** (PIN `1234`, or your own PIN
+   from Manual 1).
+3. In EggSPEED: **Settings > Connection type > Bluetooth**, pick **EggSPEED-BT** from the list of
+   paired devices (allow the Bluetooth permission when asked).
+4. Go to the **Connect** tab and tap **Connect**. The first connection can take a few seconds.
 
-Specification of the Bafang DPC18 display
-([california-ebike.com](https://california-ebike.com/products/bafang-color-display-dpc18)):
-rated current 10mA, max operating current 30mA, standby leakage <1µA, supply to the controller 50mA.
-Real currents on the P+/PL line are a few tens of mA - a huge margin against the MOSFET's 170mA.
+When you are done, unplug the converter: while it is plugged in, the controller stays awake and
+the step-down converter draws a little power from the battery.
 
-#### Rejected P+/PL switch options
+## Troubleshooting
 
-- **NTR4170N** - a mistake from memory, the datasheet showed only 30V - too little, DO NOT USE.
-- **Ready-made relay modules "10A 250VAC/10A 30VDC"** - the 30VDC rating is too low (P+ can reach ~58V).
-- **Reed relay** - considered, rejected in favor of the MOSFET (smaller, isolation not needed).
+- **The phone sees EggSPEED-BT but the connection fails ("read failed"):** unplug the converter
+  for about 10 seconds, plug it in again, and retry. If it still fails, remove the pairing in
+  the phone's Bluetooth settings and pair again.
+- **Connected, but the controller does not answer:**
+  - check TX/RX: controller TxD (pin 2) goes to the module **RXD**, controller RxD (pin 4) to the
+    module **TXD**;
+  - measure the RXD level (see [The divider](#the-divider));
+  - make sure the module was set to 1200 baud ([Manual 1](docs/01-program-bt06.md), step 7).
+- **Using a Windows PC:** after pairing, Windows creates Bluetooth COM ports; use the
+  **outgoing** one. The port numbers can change after each re-pairing. The old Bafang
+  Configuration Tool for OEM controllers does not work over Bluetooth (it stops with "File handle
+  is not a comm handle") - the converter is made for EggSPEED on Android.
 
-## Photos from disassembling the original programming cable
+## Safety
 
-| | |
-|---|---|
-| ![Cable 1](KabelUSB_1.jpeg) | ![Cable 2](KabelUSB_2.jpeg) |
+- **P+ is the full battery voltage** and is live even with the controller switched off. Insulate
+  everything and never let P+ touch the signal pins.
+- **Unplug the converter** when you are not using it.
+- **Change the default PIN** (Manual 1, step 6): with `1234`, anyone nearby could pair with the
+  converter while it is plugged in.
 
-They confirm: 3 wires (TXD/RXD/GND) go to the USB-serial board, 2 wires (P+/PL) are
-soldered together, separately - this is the mechanism that wakes the controller without a real display.
-
-## To confirm before soldering
-
-- HIGO pin numbering (controller side) - explained, see the section at the top, but still worth verifying with a multimeter (it comes only indirectly from a forum thread).
-- The controller's RxD line is settled at 3.3V (confirmed by the original programming cable,
-  which talks to the controller on 3.3V logic - see "Photos from disassembling the original
-  programming cable" below). Its TxD line runs on the controller's own 5V logic rail - a reader
-  measured it directly at ~4.6V (GitHub issue #1) - which is why the V3 wiring includes a
-  1kΩ/2kΩ divider on that line, recommended rather than a full level converter.
-- Set the BT module to 1200 baud via AT commands (`AT+BAUD1` for HC-06/BT-06) before soldering -
-  needs a 3.3V USB-UART adapter, module unpaired, no line ending.
-- Change the module's default pairing PIN (`AT+PIN`) - the default 1234/000000 would let anyone
-  nearby pair and write to the controller.
-- If buying a generic HC-06 clone, test each unit before soldering: `AT` -> `OK`,
-  `AT+VERSION`, `AT+BAUD1` -> `OK1200`.
-
-## To do
-
-1. Verify the HIGO pin numbering with a multimeter before soldering.
-2. Buy an HC-06 module (locally, e.g. Allegro - AliExpress import fees currently make it not
-   worth it for a single unit) and test it with AT commands.
-3. Set the module to 1200 baud.
-4. Physically assemble the simplified circuit (diagram V2 above) on a board/prototype.
-5. Test on a real controller - **OEM Bafang first** (the large majority of EggSPEED users),
-   then bbs-fw: read/telemetry first, writes after.
-
-## Files in the repo
+## Files
 
 | File | What it is |
 |---|---|
-| `research.md` | The full, detailed version of this documentation (in Polish) |
-| `bt-bridge-wiring.html` | The full interactive diagram |
-| `diagram.svg` | The vector diagram of the previous, more complex version (superseded by `diagram_v2.svg`) |
-| `HM-10.png`, `HM-10_appka_screenshot.jpg` | Photos of the HM-10 module |
-| `KabelUSB_1.jpeg`, `KabelUSB_2.jpeg` | Disassembly of the original programming cable |
-| `Konwerter.png` | Logic level shifter (BSS138) |
-| `DC-DC_StepDown_DC5-60V_5V.PNG` | The chosen step-down converter |
-| `Przetwornica.png` | XL7015 - rejected candidate, archive |
-| `BSS_123.jpeg` | BSS123 MOSFET |
-| `Wtyczka_HIGO5.png` | HIGO 5-pin connector, controller side |
-| `Higo5.PNG` | HIGO 5-pin connector, display side (reference only, a different connector) |
-| `Stabilizator.PNG` | 3.3V regulator (e.g. AMS1117-3.3) |
-| `Schemat_hybrydowy.png` | Hybrid diagram on photos of the real boards |
-| `diagram_v2.svg` | Simplified wiring V2 (3.3 V logic, no level converter, no MOSFET, no switch) |
-| `diagram_v3.svg` | Wiring V3 - adds an ON/OFF switch on P+/PL and an optional TxD divider (current preferred variant) |
-| `HC-06.PNG` | Photo of the HC-06 module with pinout (VCC, GND, TXD, RXD) |
-| `Schemat_Hybrydowy_V3.PNG` | Hybrid diagram V3, on photos of the real components (HC-06, step-down converter, switch, connector) |
+| [`docs/01-program-bt06.md`](docs/01-program-bt06.md) | Manual 1 - programming the BT-06 with the OTG cable |
+| [`docs/02-build-and-solder.md`](docs/02-build-and-solder.md) | Manual 2 - building and soldering the converter |
+| `diagram_v3.svg` | Wiring diagram |
+| `Schemat_Hybrydowy_V3.PNG` | Wiring drawn on photos of the real parts (with the optional switch) |
+| `HC-06.PNG` | HC-06 module (same family as the BT-06) |
+| `DC-DC_StepDown_DC5-60V_5V.PNG` | The step-down converter |
+| `Wtyczka_HIGO5.png` | HIGO 5-pin connector |
+| [`archive/`](archive/ARCHIVE.md) | Earlier design variants and research notes (project history) |
