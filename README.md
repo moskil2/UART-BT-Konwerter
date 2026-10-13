@@ -8,40 +8,40 @@ controller over Bluetooth - no cable between the phone and the bike.
 **Status: built and tested.** Works with EggSPEED v0.6.1 or newer over Bluetooth - reading,
 programming and the live Cockpit - on OEM Bafang firmware and on BBS-FW (tested on a BBSHD).
 
-<img src="docs/img/Lutowanie/8.jpeg" alt="The finished converter wrapped in Kapton tape, next to a 2 euro coin for size" width="480">
+<img src="docs/img/Lutowanie/8.jpeg" alt="The finished converter wrapped in Kapton tape, next to a 2 euro coin for size" height="300"> <img src="docs/img/Lutowanie/11.jpeg" alt="The converter in its 3D-printed enclosure" height="300">
 
 This page is a step-by-step guide to building your own.
 
 ## How it works
 
+Normally EggSPEED talks to the controller through the USB OTG programming cable, with the phone
+plugged into the bike. The converter replaces that cable: it stays plugged into the controller,
+and the phone talks to it over Bluetooth. All communication between the app and the controller
+goes over Bluetooth - there is no cable between the phone and the bike at all.
 
-- The **BT-06** module is a Bluetooth "wireless serial cable": the phone sends bytes, the module
-  passes them to the controller's UART at 1200 baud, and back.
-- **P+ and PL are soldered together** - the same trick as in the original programming cable: it
-  wakes the controller without a display.
-- A **step-down converter** makes 5V for the module from the battery voltage on P+.
-- A **resistor divider** brings the controller's ~4.6V TxD signal down to a level that is safe for
-  the module's 3.3V input.
+Everything EggSPEED can do over the cable works the same way over Bluetooth: you can read and
+program the controller settings, and use the Cockpit with the live speed, power, current,
+voltage, battery and all the other parameters while riding.
 
-While the converter is plugged in, the controller stays on (just like with the programming cable
-plugged in). Unplug the converter when you are done.
+The converter is small (about the size of the Bluetooth module itself), gets its power from the
+bike's battery through the controller connector, and needs no battery or charging of its own.
 
 ## What you need
 
-| Part | Notes |
-|---|---|
-| **DSD TECH BT-06** Bluetooth module | Bluetooth Classic (SPP), 3.6-6V supply, 3.3V logic. Uses 4 pads: VCC, GND, TXD, RXD. A generic **HC-06** works the same way. |
-| **Step-down converter** 5-60V in, 5V out | Fixed 5V output, 4 pads IN+/IN-/OUT+/OUT-, input rated for at least the full battery voltage. Non-isolated type (IN- and OUT- connected inside - check with a multimeter). |
-| **Cable with a HIGO 5-pin plug** | Must mate with the controller-side connector (the one the display or the programming cable plugs into). |
-| **Resistors** | For the TxD divider - see [The divider](#the-divider) below. |
-| Thin wire, heat-shrink tubing, Kapton tape | |
+<img src="docs/img/Lutowanie/0.jpeg" alt="Parts: cable with a HIGO 5-pin plug, two resistors, step-down converter, Bluetooth module" width="480">
+
+| Part | Photo | Notes |
+|---|---|---|
+| **DSD TECH BT-06** Bluetooth module | <img src="docs/img/parts/bt06-module.jpeg" alt="BT-06 module" height="110"> | Bluetooth Classic (SPP), 3.6-6V supply, 3.3V logic. Uses 4 pads: VCC, GND, TXD, RXD. A generic **HC-06** works the same way. |
+| **Step-down converter** 5-60V in, 5V out | <img src="docs/img/parts/step-down.jpeg" alt="Step-down converter" height="110"> | Fixed 5V output, 4 pads IN+/IN-/OUT+/OUT-, input rated for at least the full battery voltage. Non-isolated type (IN- and OUT- connected inside - check with a multimeter). |
+| **Cable with a HIGO 5-pin plug** | <img src="docs/img/parts/cable-higo-plug.jpeg" alt="Cable with a HIGO 5-pin plug" height="110"> | Must mate with the controller-side connector (the one the display or the programming cable plugs into). |
+| **Resistors** | <img src="docs/img/parts/resistors.jpeg" alt="Two resistors" height="110"> | For the TxD divider - see [The divider](#the-divider) below. |
+| Thin wire, heat-shrink tubing, Kapton tape | | |
 
 Tools: soldering iron, multimeter.
 
 For programming the module once (Step 1): the Bafang USB programming cable (OTG cable), a Windows
 PC and 4 jumper wires.
-
-<img src="docs/img/Lutowanie/0.jpeg" alt="Parts: cable with a HIGO 5-pin plug, two resistors, step-down converter, Bluetooth module" width="480">
 
 ## HIGO pinout (controller side)
 
@@ -131,8 +131,9 @@ In short:
    paired devices (allow the Bluetooth permission when asked).
 4. Go to the **Connect** tab and tap **Connect**. The first connection can take a few seconds.
 
-When you are done, unplug the converter: while it is plugged in, the controller stays awake and
-the step-down converter draws a little power from the battery.
+The converter can stay plugged in on the bike. While it is plugged in, the controller stays
+awake and the converter draws a little power, so after riding it is best to turn the battery
+off with its own switch.
 
 ## Troubleshooting
 
@@ -153,9 +154,10 @@ the step-down converter draws a little power from the battery.
 
 - **P+ is the full battery voltage** and is live even with the controller switched off. Insulate
   everything and never let P+ touch the signal pins.
-- **Unplug the converter** when you are not using it.
+- **Turn the battery off with its switch** after riding: the converter keeps the controller awake
+  and draws a little power for as long as the battery is on.
 - **Change the default PIN** (Manual 1, step 6): with `1234`, anyone nearby could pair with the
-  converter while it is plugged in.
+  converter while the battery is on.
 
 ## Files
 
@@ -168,4 +170,5 @@ the step-down converter draws a little power from the battery.
 | `HC-06.PNG` | HC-06 module (same family as the BT-06) |
 | `DC-DC_StepDown_DC5-60V_5V.PNG` | The step-down converter |
 | `Wtyczka_HIGO5.png` | HIGO 5-pin connector |
+| `Higo5.PNG` | HIGO 5-pin plug (female), pin numbers and functions |
 | [`archive/`](archive/ARCHIVE.md) | Earlier design variants and research notes (project history) |

@@ -105,7 +105,7 @@
     <!-- ===== Notes ===== -->
     <g font-size="13.5">
       <text x="40" y="580" font-weight="700">Module:</text>
-      <text x="200" y="580">BT-06 or HC-06 (Bluetooth Classic SPP), set to 1200 baud before soldering. HM-10 (BLE) does not work with EggSPEED.</text>
+      <text x="200" y="580">BT-06 or HC-06 (Bluetooth Classic SPP), set to 1200 baud before soldering.</text>
       <text x="40" y="603" font-weight="700">Ground path:</text>
       <text x="200" y="603">HIGO GND goes to IN-, OUT- goes to the module GND (no direct GND to GND wire). The DC-DC joins IN- and OUT- inside.</text>
       <text x="40" y="626" font-weight="700">Switch (optional):</text>

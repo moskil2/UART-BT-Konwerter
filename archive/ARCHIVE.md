@@ -92,7 +92,7 @@ soldered together separately - this is what wakes the controller without a displ
 
 Early documents used the numbering 1=P+, 2=PL, 3=RxD, 4=GND, 5=TxD, taken indirectly from a forum
 thread. It was wrong. The two mating halves of the connector - controller side and display side
-([`Higo5.PNG`](Higo5.PNG), reference only) - have position numbers that look mirrored when you
+([`Higo5.PNG`](../Higo5.PNG), reference only) - have position numbers that look mirrored when you
 compare the photos, which caused the confusion. The correct controller-side numbering is in the
 main README and was confirmed with a continuity test on a real cable.
 

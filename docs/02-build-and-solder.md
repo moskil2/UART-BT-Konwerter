@@ -18,10 +18,11 @@ step-down converter (5-60V in, 5V out) and the BT-06 module.
 
 ![Parts](img/Lutowanie/0.jpeg)
 
-## 2. Remove the pin header from the module
+## 2. Remove the pin header from the module (optional)
 
-Desolder the 4-pin header from the BT-06. The wires are soldered straight to the pads, which
-keeps the converter small. The pads on the back are labeled STATE, RXD, TXD, GND, VCC, EN - only
+This step is not necessary - the wires can also be soldered to the header pins. I desoldered the
+4-pin header for easier access to the pads and a smaller module, and so that a resistor can be
+soldered in where the pins were. The wires are then soldered straight to the pads. The pads on the back are labeled STATE, RXD, TXD, GND, VCC, EN - only
 RXD, TXD, GND and VCC are used.
 
 ## 3. R2 between RXD and GND
@@ -35,6 +36,9 @@ leads short.
 
 Wrap the module in Kapton tape, leaving the pads free. Stick the step-down converter onto the
 back of the module, with Kapton tape between them so no contacts touch.
+
+Kapton tape is not necessary - I added it as extra protection, so that nothing can short
+against the module or the converter.
 
 ![Step-down converter on the back of the module](img/Lutowanie/2.jpeg)
 
@@ -61,7 +65,10 @@ lead will take the wire from HIGO pin 2 (TxD).
 
 ## 8. The HIGO cable
 
-Solder the cable wires, **by pin number**:
+Solder the cable wires, **by pin number**. The plug of the converter cable (female), seen from
+the front:
+
+<img src="../Higo5.PNG" alt="HIGO 5-pin female plug, front view: 1 GND, 2 TxD, 3 P+, 4 RxD, 5 PL (Power Lock)" width="360">
 
 | HIGO pin | Goes to |
 |---|---|

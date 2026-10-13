@@ -112,7 +112,7 @@ OKsetname
 ## 6. Change the PIN (optional, recommended)
 
 The factory pairing PIN is `1234`. Anyone nearby who knows it can pair with the converter while
-it is plugged in. To set your own 4-digit PIN (here `4711`):
+the battery is on. To set your own 4-digit PIN (here `4711`):
 
 ```powershell
 $p = New-Object System.IO.Ports.SerialPort COM4,9600,None,8,One
