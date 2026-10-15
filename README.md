@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/img/logo.png" width="300" alt="EggSPEED Bluetooth module"></p>
+
 # UART-BT Converter
 
 A small DIY Bluetooth converter for Bafang BBS mid-drive controllers. It plugs into the
