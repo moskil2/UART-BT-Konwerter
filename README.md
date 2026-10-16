@@ -40,8 +40,8 @@ bike's battery through the controller connector, and needs no battery or chargin
 
 | Part | Photo | Notes |
 |---|---|---|
-| **DSD TECH BT-06** Bluetooth module | <img src="docs/img/parts/bt06-module.jpeg" alt="BT-06 module" height="110"> | Bluetooth Classic (SPP), 3.6-6V supply, 3.3V logic. Uses 4 pads: VCC, GND, TXD, RXD. A generic **HC-06** works the same way. |
-| **Step-down converter** 5-60V in, 5V out | <img src="docs/img/parts/step-down.jpeg" alt="Step-down converter" height="110"> | Fixed 5V output, 4 pads IN+/IN-/OUT+/OUT-, input rated for at least the full battery voltage. Non-isolated type (IN- and OUT- connected inside - check with a multimeter). |
+| **[DSD TECH BT-06](https://www.amazon.de/dp/B09NKV8MY2)** Bluetooth module | <img src="docs/img/parts/bt06-module.jpeg" alt="BT-06 module" height="110"> | Bluetooth Classic (SPP), 3.6-6V supply, 3.3V logic. Uses 4 pads: VCC, GND, TXD, RXD. A generic **HC-06** works the same way. |
+| **[Step-down converter](https://www.aliexpress.com/item/1005008319059787.html)** 5-60V in, 5V out | <img src="docs/img/parts/step-down.jpeg" alt="Step-down converter" height="110"> | Fixed 5V output, 4 pads IN+/IN-/OUT+/OUT-, input rated for at least the full battery voltage. Non-isolated type (IN- and OUT- connected inside - check with a multimeter). |
 | **Cable with a HIGO 5-pin plug** | <img src="docs/img/parts/cable-higo-plug.jpeg" alt="Cable with a HIGO 5-pin plug" height="110"> <img src="docs/img/parts/higo-plug.png" alt="HIGO 5-pin plug with the green insert" height="110"> | Must mate with the controller-side connector (the one the display or the programming cable plugs into). |
 | **Resistors** | <img src="docs/img/parts/resistors.jpeg" alt="Two resistors" height="110"> | For the TxD divider - see [The divider](#the-divider) below. |
 | Thin wire, heat-shrink tubing, Kapton tape | | |
