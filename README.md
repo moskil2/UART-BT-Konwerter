@@ -55,7 +55,7 @@ PC and 4 jumper wires.
 
 | Pin | Function | Notes |
 |---|---|---|
-| 1 | GND | |
+| 1 | GND | 0V |
 | 2 | TxD | controller transmits, 5V logic |
 | 3 | P+ | **battery voltage (30-60V), live even when the controller is off** |
 | 4 | RxD | controller receives, 3.3V logic is enough |
